@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "495725218152",
+    "project_id": "find-my-perfect-dog",
+    "storage_bucket": "find-my-perfect-dog.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495725218152:android:d90dba9c0d94275456aedd",
+        "android_client_info": {
+          "package_name": "com.sdc.findmyperfectdog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWk-0D7sqOkY31xVcKNPHAypqEaEDuLlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
