@@ -31,7 +31,6 @@ fun ActivityScreen(selectedActivity: MutableState<String>, navController: NavCon
     ) {
         Text(
             text = "3. 활동량",
-
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -50,7 +49,8 @@ fun ActivityScreen(selectedActivity: MutableState<String>, navController: NavCon
         Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = { navController.navigate("independence_screen") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = selectedActivity.value.isNotEmpty() // 선택되지 않으면 버튼 비활성화
         ) {
             Text(text = "다음")
         }

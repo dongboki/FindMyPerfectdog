@@ -50,6 +50,7 @@ fun IndependenceScreen(selectedIndependence: MutableState<String>, navController
         Button(
             onClick = { navController.navigate("kid_screen") },
             modifier = Modifier.fillMaxWidth()
+            ,enabled = selectedIndependence.value.isNotEmpty()
         ) {
             Text(text = "다음")
         }

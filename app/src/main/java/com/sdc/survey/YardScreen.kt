@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.foundation.Image
 
 // 2. 마당 유무 화면
 @Composable
@@ -50,7 +52,8 @@ fun YardScreen(hasYard: MutableState<String>, navController: NavController) {
         Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = { navController.navigate("activity_screen") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = hasYard.value.isNotEmpty()
         ) {
             Text(text = "다음")
         }

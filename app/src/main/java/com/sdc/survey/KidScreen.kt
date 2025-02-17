@@ -50,6 +50,8 @@ fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
         Button(
             onClick = { navController.navigate("result_screen") },
             modifier = Modifier.fillMaxWidth()
+            , enabled = hasKid.value.isNotEmpty()
+
         ) {
             Text(text = "제출")
         }

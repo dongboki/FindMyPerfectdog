@@ -49,7 +49,8 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
         Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = { navController.navigate("yard_screen") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = selectedSize.value.isNotEmpty()
         ) {
             Text(text = "다음")
         }
