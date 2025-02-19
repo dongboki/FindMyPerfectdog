@@ -39,7 +39,7 @@ fun ToggleFavoriteIcon() {
             Icon(
                 imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = "Favorite",
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(22.dp),
                 tint = if (isLiked) Color.Red else Color.White
             )
         }

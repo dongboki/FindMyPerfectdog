@@ -43,10 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.annotations.concurrent.Background
 import com.google.firebase.firestore.FirebaseFirestore
+import com.sdc.findmyperfectdog.AfacadFontFamily
 import com.sdc.findmyperfectdog.R
 import com.sdc.findmyperfectdog.ui.theme.DotsIndicator
 import com.sdc.findmyperfectdog.ui.theme.ToggleFavoriteIcon
-
 
 
 // Firestore에서 불러온 데이터를 담을 데이터 클래스 (기본 생성자 필수)
@@ -82,11 +82,13 @@ fun fetchTopMatchingBreedsFromFirestore(
                 val breed = document.toObject(Breed::class.java)
                 if (breed != null) {
                     var score = 0
-                    if (breed.size == selectedSize) score++
+
+                    if (breed.size == selectedSize) score += 2
+                    if (breed.kid == hasKid) score+=2
+                    // 나머지 +1
                     if (breed.yard == hasYard) score++
                     if (breed.activity == selectedActivity) score++
                     if (breed.independence == selectedIndependence) score++
-                    if (breed.kid == hasKid) score++
                     breedScores.add(breed to score)
                 }
             }
@@ -100,9 +102,6 @@ fun fetchTopMatchingBreedsFromFirestore(
             onFailure(e)
         }
 }
-
-
-
 
 
 // Firestore에서 데이터를 가져와 UI에 상위 5개 강아지를 순위와 함께 표시하는 Composable
@@ -148,6 +147,7 @@ fun ResultScreen(
                 CircularProgressIndicator()
             }
         }
+
         errorMessage.value != null -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -156,6 +156,7 @@ fun ResultScreen(
                 Text(text = "오류 발생: ${errorMessage.value}")
             }
         }
+
         else -> {
             // topBreeds.value가 비어있으면 메시지 표시
             if (topBreeds.value.isEmpty()) {
@@ -176,7 +177,6 @@ fun ResultScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(22.dp)
-
 
 
                 ) {
@@ -207,10 +207,17 @@ fun ResultScreen(
 }
 
 
-
 // Breed 하나를 표시하는 Composable
 @Composable
 fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
+
+    val subTitleText = when (breed.size) {
+        "대형" -> "‘함께 뛰놀기 딱 좋은 반려견’"
+        "중형" -> "‘도시 생활과 자연을 모두 즐길 수 있는 반려견’"
+        "소형" -> "‘작지만 큰 기쁨을 주는 반려견, 당신의 소중한 친구’"
+        else -> "‘당신 성향에 딱 맞는 반려견’"
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -224,11 +231,14 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 fontSize = 24.sp,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
+
             Text(
-                text = "‘함께 뛰놀기 딱 좋은 반려견’",
-                color = androidx.compose.ui.graphics.Color.Gray
+                text = subTitleText,
+                color = Color.Gray
             )
+
             Spacer(modifier = Modifier.height(17.dp))
+
         } else {
             Text(
                 text = breed.name,
@@ -260,12 +270,15 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White)
                 ) {
                     // 두 이미지를 가로 스크롤(LazyRow)
                     androidx.compose.foundation.lazy.LazyRow(
                         modifier = Modifier.fillMaxSize(),
                         state = listState, // 스크롤 상태 연결
-                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
+                            8.dp
+                        )
                     ) {
                         // 첫 번째 아이템
                         item {
@@ -328,7 +341,8 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                             text = "2,890", // 좋아요 수 예시
                             color = androidx.compose.ui.graphics.Color(0xFF001A72),
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = AfacadFontFamily
                         )
                     }
                 }
@@ -389,6 +403,7 @@ fun RecommendedRow(breeds: List<Breed>) {
                     fontSize = 14.sp,
                     maxLines = 1
                 )
+
             }
         }
     }

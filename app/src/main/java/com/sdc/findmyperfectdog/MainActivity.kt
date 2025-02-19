@@ -7,6 +7,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +31,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+val AfacadFontFamily = FontFamily(
+    Font(R.font.afacad_medium) // res/font/afacad.ttf에 있는 폰트를 참조
+)
 
 // SurveyNavHost: 설문조사에 사용되는 상태들을 remember로 생성하고 각 화면으로 전달
 @Composable

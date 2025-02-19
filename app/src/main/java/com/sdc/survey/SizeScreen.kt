@@ -22,7 +22,7 @@ import androidx.navigation.NavController
 // 1. 사이즈 선택 화면
 @Composable
 fun SizeScreen(selectedSize: MutableState<String>, navController: NavController) {
-    val sizeOptions = listOf("소형", "중형", "대형")
+    val sizeOptions = listOf("소형", "중형", "대형","초대형")
     Column(
         modifier = Modifier
             .fillMaxSize()
