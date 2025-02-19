@@ -1,3 +1,4 @@
+// TrainLevelScreen.kt
 package com.sdc.survey
 
 import androidx.compose.foundation.layout.Column
@@ -19,41 +20,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-// 5. 아이 유무 화면
 @Composable
-fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
-    val yesNoOptions = listOf("예", "아니오")
+fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: NavController) {
+    // 옵션 리스트: 상, 중, 하
+    val trainLevelOptions = listOf("상", "중", "하")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .systemBarsPadding()
     ) {
+        // 제목 표시
         Text(
-            text = "5. 아이 유무",
+            text = "6. 훈련 난이도",
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
-        yesNoOptions.forEach { option ->
+
+        // 옵션별로 RadioButton과 텍스트 표시
+        trainLevelOptions.forEach { option ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
                 RadioButton(
-                    selected = hasKid.value == option,
-                    onClick = { hasKid.value = option }
+                    selected = selectedTrainLevel.value == option,
+                    onClick = { selectedTrainLevel.value = option }
                 )
                 Text(text = option, modifier = Modifier.padding(start = 8.dp))
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = { navController.navigate("trainLevel_screen") },
-            modifier = Modifier.fillMaxWidth()
-            , enabled = hasKid.value.isNotEmpty()
 
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = { navController.navigate("shedding_screen") },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = selectedTrainLevel.value.isNotEmpty()
         ) {
-            Text(text = "제출")
+            Text(text = "다음")
         }
     }
 }

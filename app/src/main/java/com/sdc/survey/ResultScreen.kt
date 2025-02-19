@@ -1,6 +1,7 @@
 package com.sdc.survey
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable // <-- 새로 추가된 import
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,17 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +23,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -38,16 +32,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.annotations.concurrent.Background
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sdc.findmyperfectdog.AfacadFontFamily
-import com.sdc.findmyperfectdog.R
 import com.sdc.findmyperfectdog.ui.theme.DotsIndicator
 import com.sdc.findmyperfectdog.ui.theme.ToggleFavoriteIcon
-
 
 // Firestore에서 불러온 데이터를 담을 데이터 클래스 (기본 생성자 필수)
 data class Breed(
@@ -57,18 +47,20 @@ data class Breed(
     val activity: String = "",
     val independence: String = "",
     val kid: String = "",
+    val shedding: String = "",
+    val trainlevel: String = "",
     val youngthumbnail: String = "",
     val oldthumbnail: String = ""
 )
 
-// Firestore에서 모든 Breed 문서를 가져온 후, 조건에 따른 일치 점수를 계산하여
-// 가장 높은 점수를 가진 상위 5개 강아지를 선택하는 함수
 fun fetchTopMatchingBreedsFromFirestore(
     selectedSize: String,
     hasYard: String,
     selectedActivity: String,
     selectedIndependence: String,
     hasKid: String,
+    selectedShedding: String,
+    selectedTrainlevel: String,
     onSuccess: (List<Breed>) -> Unit,
     onFailure: (Exception) -> Unit
 ) {
@@ -83,16 +75,25 @@ fun fetchTopMatchingBreedsFromFirestore(
                 if (breed != null) {
                     var score = 0
 
+                    // 크기(사이즈)가 일치하면 +2
                     if (breed.size == selectedSize) score += 2
-                    if (breed.kid == hasKid) score+=2
-                    // 나머지 +1
+                    // 아이 유무가 일치하면 +2
+                    if (breed.kid == hasKid) score += 2
+                    // 마당 유무가 일치하면 +1
                     if (breed.yard == hasYard) score++
+                    // 활동량이 일치하면 +1
                     if (breed.activity == selectedActivity) score++
+                    // 독립성이 일치하면 +1
                     if (breed.independence == selectedIndependence) score++
+                    // 추가: 탈모량(shedding)이 일치하면 +1
+                    if (breed.shedding == selectedShedding) score++
+                    // 추가: 훈련 난이도(trainlevel)가 일치하면 +1
+                    if (breed.trainlevel == selectedTrainlevel) score++
+
                     breedScores.add(breed to score)
                 }
             }
-            // 내림차순 정렬하여 상위 5개 선택 (점수가 같으면 첫 번째 순서대로)
+            // 점수를 내림차순으로 정렬 후 상위 5개 선택
             val topFive = breedScores.sortedByDescending { it.second }
                 .take(5)
                 .map { it.first }
@@ -103,7 +104,6 @@ fun fetchTopMatchingBreedsFromFirestore(
         }
 }
 
-
 // Firestore에서 데이터를 가져와 UI에 상위 5개 강아지를 순위와 함께 표시하는 Composable
 @Composable
 fun ResultScreen(
@@ -111,13 +111,23 @@ fun ResultScreen(
     hasYard: String,
     selectedActivity: String,
     selectedIndependence: String,
-    hasKid: String
+    hasKid: String,
+    selectedShedding: String,
+    selectedTrainlevel: String
 ) {
     val topBreeds = remember { mutableStateOf<List<Breed>>(emptyList()) }
     val isLoading = remember { mutableStateOf(true) }
     val errorMessage = remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(selectedSize, hasYard, selectedActivity, selectedIndependence, hasKid) {
+    LaunchedEffect(
+        selectedSize,
+        hasYard,
+        selectedActivity,
+        selectedIndependence,
+        hasKid,
+        selectedShedding,
+        selectedTrainlevel
+    ) {
         isLoading.value = true
         errorMessage.value = null
 
@@ -127,6 +137,8 @@ fun ResultScreen(
             selectedActivity = selectedActivity,
             selectedIndependence = selectedIndependence,
             hasKid = hasKid,
+            selectedShedding = selectedShedding,
+            selectedTrainlevel = selectedTrainlevel,
             onSuccess = { breeds ->
                 topBreeds.value = breeds
                 isLoading.value = false
@@ -142,7 +154,7 @@ fun ResultScreen(
         isLoading.value -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = androidx.compose.ui.Alignment.Center
+                contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
@@ -151,36 +163,33 @@ fun ResultScreen(
         errorMessage.value != null -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = androidx.compose.ui.Alignment.Center
+                contentAlignment = Alignment.Center
             ) {
                 Text(text = "오류 발생: ${errorMessage.value}")
             }
         }
 
         else -> {
-            // topBreeds.value가 비어있으면 메시지 표시
             if (topBreeds.value.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(text = "조건에 맞는 강아지가 없습니다.")
                 }
             } else {
-                // 첫 번째(1순위)
+                // 1) 현재 1순위 강아지
                 val firstBreed = topBreeds.value.first()
 
-                // 나머지(2~5순위)
-                val otherBreeds = topBreeds.value.drop(1) // 인덱스 1부터 끝까지
+                // 2) 나머지 강아지들(2~5순위)
+                val otherBreeds = topBreeds.value.drop(1)
 
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(22.dp)
-
-
                 ) {
-                    // 1순위는 기존 BreedItem 그대로
+                    // 1순위 보여주는 BreedItem
                     BreedItem(
                         breed = firstBreed,
                         isFirstRank = true
@@ -188,7 +197,7 @@ fun ResultScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 2~5 순위 리스트가 비어있지 않다면 가로 스크롤 표시
+                    // 추천 강아지가 있을 때만 표시
                     if (otherBreeds.isNotEmpty()) {
                         Text(
                             text = "추천 강아지",
@@ -197,15 +206,19 @@ fun ResultScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // 가로 스크롤 목록
-                        RecommendedRow(otherBreeds)
+                        // 여기서 RecommendedRow 호출 + 클릭 콜백 구현
+                        RecommendedRow(otherBreeds) { clickedBreed ->
+                            // 클릭된 강아지를 1순위로 교체하는 로직
+                            val currentList = topBreeds.value
+                            val newList = listOf(clickedBreed) + currentList.filter { it != clickedBreed }
+                            topBreeds.value = newList
+                        }
                     }
                 }
             }
         }
     }
 }
-
 
 // Breed 하나를 표시하는 Composable
 @Composable
@@ -221,7 +234,6 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-
     ) {
         // 조건에 따라 견종 이름 텍스트 스타일 분기
         if (isFirstRank) {
@@ -255,11 +267,16 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                     .fillMaxWidth()
                     .width(361.dp)
                     .height(343.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(16.dp),
                 elevation = androidx.compose.material3.CardDefaults.cardElevation(4.dp)
             ) {
                 // LazyListState를 이용해 스크롤 상태 추적
                 val listState = rememberLazyListState()
+
+                // Breed가 바뀔 때마다 LazyRow의 스크롤을 0번 인덱스로 초기화함
+                LaunchedEffect(breed) {
+                    listState.scrollToItem(0)
+                }
 
                 // 현재 보이는 아이템 인덱스 (0 또는 1) 추적
                 val currentIndex by remember {
@@ -276,9 +293,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                     androidx.compose.foundation.lazy.LazyRow(
                         modifier = Modifier.fillMaxSize(),
                         state = listState, // 스크롤 상태 연결
-                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
-                            8.dp
-                        )
+                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
                     ) {
                         // 첫 번째 아이템
                         item {
@@ -309,7 +324,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                         totalDots = 2,
                         selectedIndex = currentIndex,
                         modifier = Modifier
-                            .align(androidx.compose.ui.Alignment.BottomCenter)
+                            .align(Alignment.BottomCenter)
                             .padding(bottom = 20.dp)
                     )
 
@@ -318,31 +333,31 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
 
                     // 오른쪽 하단 좋아요 수 (예: 2,890)
                     androidx.compose.foundation.layout.Row(
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .align(androidx.compose.ui.Alignment.BottomEnd)
+                            .align(Alignment.BottomEnd)
                             .padding(20.dp)
                             .height(32.dp)
                             .width(90.dp)
                             .background(
-                                color = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
-                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                color = Color(0xFFFFFFFF),
+                                shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .padding(horizontal = 10.dp)
                     ) {
                         androidx.compose.material3.Icon(
                             imageVector = androidx.compose.material.icons.Icons.Default.ThumbUp,
                             contentDescription = "Likes",
-                            tint = androidx.compose.ui.graphics.Color(0xFF001A72),
+                            tint = Color(0xFF001A72),
                             modifier = Modifier.size(13.dp)
                         )
                         Spacer(modifier = Modifier.width(14.dp))
                         Text(
-                            text = "2,890", // 좋아요 수 예시
-                            color = androidx.compose.ui.graphics.Color(0xFF001A72),
+                            text = "1000", // 좋아요 수 예시
+                            color = Color(0xFF001A72),
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = AfacadFontFamily
+                            fontFamily = AfacadFontFamily,
+                            modifier = Modifier.padding(end = 8.dp)
                         )
                     }
                 }
@@ -369,8 +384,12 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
     }
 }
 
+// 클릭을 전달받기 위해 onBreedClick 추가
 @Composable
-fun RecommendedRow(breeds: List<Breed>) {
+fun RecommendedRow(
+    breeds: List<Breed>,
+    onBreedClick: (Breed) -> Unit
+) {
     // LazyRow로 가로 스크롤
     androidx.compose.foundation.lazy.LazyRow(
         horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
@@ -383,6 +402,10 @@ fun RecommendedRow(breeds: List<Breed>) {
                     .size(133.dp)  // 카드 너비
                     .padding(vertical = 2.dp)
                     .clip(RoundedCornerShape(8.dp))
+                    .clickable {
+                        // 클릭 시, 상위 Composable에 정의된 콜백 호출
+                        onBreedClick(breed)
+                    }
             ) {
                 // 이미지
                 coil.compose.AsyncImage(
@@ -403,9 +426,7 @@ fun RecommendedRow(breeds: List<Breed>) {
                     fontSize = 14.sp,
                     maxLines = 1
                 )
-
             }
         }
     }
 }
-

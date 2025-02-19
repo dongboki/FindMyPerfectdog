@@ -18,7 +18,11 @@ import com.sdc.survey.ActivityScreen
 import com.sdc.survey.IndependenceScreen
 import com.sdc.survey.KidScreen
 import com.sdc.survey.ResultScreen
+import com.sdc.survey.SheddingScreen
 import com.sdc.survey.YardScreen
+import com.sdc.survey.TrainLevelScreen
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +48,8 @@ fun SurveyNavHost(navController: NavHostController) {
     val selectedActivity = remember { mutableStateOf("") }
     val selectedIndependence = remember { mutableStateOf("") }
     val hasKid = remember { mutableStateOf("") }
+    val selectedShedding = remember { mutableStateOf("") }
+    val selectedTrainlevel = remember { mutableStateOf("") }
 
     NavHost(navController = navController, startDestination = "size_screen") {
         composable("size_screen") {
@@ -61,13 +67,23 @@ fun SurveyNavHost(navController: NavHostController) {
         composable("kid_screen") {
             KidScreen(hasKid = hasKid, navController = navController)
         }
+        composable("shedding_screen") {
+            SheddingScreen(selectedShedding = selectedShedding, navController = navController)
+        }
+        composable("trainLevel_screen") {
+            TrainLevelScreen(selectedTrainLevel = selectedTrainlevel, navController = navController)
+        }
+
+
         composable("result_screen") {
             ResultScreen(
                 selectedSize = selectedSize.value,
                 hasYard = hasYard.value,
                 selectedActivity = selectedActivity.value,
                 selectedIndependence = selectedIndependence.value,
-                hasKid = hasKid.value
+                hasKid = hasKid.value,
+                selectedShedding = selectedShedding.value,
+                selectedTrainlevel = selectedTrainlevel.value
             )
         }
     }

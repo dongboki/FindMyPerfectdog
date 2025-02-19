@@ -19,41 +19,50 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-// 5. 아이 유무 화면
 @Composable
-fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
-    val yesNoOptions = listOf("예", "아니오")
+fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavController) {
+    // 많음, 보통, 적음 옵션 리스트를 만듭니다.
+    val sheddingOptions = listOf("많음", "보통", "적음")
+
+    // 전체 화면을 채우는 Column을 만듭니다.
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .systemBarsPadding()
     ) {
+        // 제목 텍스트를 표시합니다.
         Text(
-            text = "5. 아이 유무",
+            text = "7. 털빠짐 정도",
             fontWeight = FontWeight.Bold
         )
+        // 제목과 옵션 사이에 간격을 줍니다.
         Spacer(modifier = Modifier.height(16.dp))
-        yesNoOptions.forEach { option ->
+
+        // 각 옵션에 대해 RadioButton과 텍스트를 Row에 배치합니다.
+        sheddingOptions.forEach { option ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
                 RadioButton(
-                    selected = hasKid.value == option,
-                    onClick = { hasKid.value = option }
+                    selected = selectedShedding.value == option,
+                    onClick = { selectedShedding.value = option }
                 )
                 Text(text = option, modifier = Modifier.padding(start = 8.dp))
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = { navController.navigate("trainLevel_screen") },
-            modifier = Modifier.fillMaxWidth()
-            , enabled = hasKid.value.isNotEmpty()
 
+        // 남은 공간을 차지하는 Spacer (버튼을 하단에 고정)
+        Spacer(modifier = Modifier.weight(1f))
+
+        // "다음" 버튼: 옵션이 선택되어 있을 때만 활성화되고, 클릭 시 다음 화면 (예: result_screen)으로 이동합니다.
+        Button(
+            onClick = { navController.navigate("result_screen") },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = selectedShedding.value.isNotEmpty()
         ) {
-            Text(text = "제출")
+            Text(text = "다음")
         }
     }
 }
