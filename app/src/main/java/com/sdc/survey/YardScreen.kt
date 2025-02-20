@@ -20,6 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.Color
 
 // 2. 마당 유무 화면
 @Composable
@@ -50,12 +55,29 @@ fun YardScreen(hasYard: MutableState<String>, navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = { navController.navigate("activity_screen") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = hasYard.value.isNotEmpty()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp) // 높이 60dp 설정
+                .border(1.dp, Color(0xFF999999), RoundedCornerShape(12.dp)) // 보더 추가
         ) {
-            Text(text = "다음")
+            Button(
+                onClick = { navController.navigate("activity_screen") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp), // 버튼 높이도 60dp로 맞춤
+                shape = RoundedCornerShape(12.dp), // 둥근 모서리 설정
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White, // 버튼 배경색 흰색
+                    contentColor = Color.Black // 버튼 글씨색 검정
+                ),
+                enabled = hasYard.value.isNotEmpty()
+            ) {
+                Text(
+                    text = "다음",
+                    fontWeight = FontWeight.SemiBold // 글씨 굵기 SemiBold
+                )
+            }
         }
     }
 }

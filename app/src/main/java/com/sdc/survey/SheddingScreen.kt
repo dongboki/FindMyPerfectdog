@@ -1,5 +1,7 @@
 package com.sdc.survey
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,13 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -55,14 +60,29 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
 
         // 남은 공간을 차지하는 Spacer (버튼을 하단에 고정)
         Spacer(modifier = Modifier.weight(1f))
-
-        // "다음" 버튼: 옵션이 선택되어 있을 때만 활성화되고, 클릭 시 다음 화면 (예: result_screen)으로 이동합니다.
-        Button(
-            onClick = { navController.navigate("result_screen") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = selectedShedding.value.isNotEmpty()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp) // 높이 60dp 설정
+                .border(1.dp, Color(0xFF999999), RoundedCornerShape(12.dp)) // 보더 추가
         ) {
-            Text(text = "다음")
+            Button(
+                onClick = { navController.navigate("result_screen") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp), // 버튼 높이도 60dp로 맞춤
+                shape = RoundedCornerShape(12.dp), // 둥근 모서리 설정
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White, // 버튼 배경색 흰색
+                    contentColor = Color.Black // 버튼 글씨색 검정
+                ),
+                enabled = selectedShedding.value.isNotEmpty()
+            ) {
+                Text(
+                    text = "다음",
+                    fontWeight = FontWeight.SemiBold // 글씨 굵기 SemiBold
+                )
+            }
         }
     }
 }

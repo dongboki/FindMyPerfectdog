@@ -67,11 +67,11 @@ fun SurveyNavHost(navController: NavHostController) {
         composable("kid_screen") {
             KidScreen(hasKid = hasKid, navController = navController)
         }
-        composable("shedding_screen") {
-            SheddingScreen(selectedShedding = selectedShedding, navController = navController)
-        }
         composable("trainLevel_screen") {
             TrainLevelScreen(selectedTrainLevel = selectedTrainlevel, navController = navController)
+        }
+        composable("shedding_screen") {
+            SheddingScreen(selectedShedding = selectedShedding, navController = navController)
         }
 
 

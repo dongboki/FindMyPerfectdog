@@ -1,7 +1,9 @@
 package com.sdc.survey
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable // <-- 새로 추가된 import
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,7 +80,7 @@ fun fetchTopMatchingBreedsFromFirestore(
                     // 크기(사이즈)가 일치하면 +2
                     if (breed.size == selectedSize) score += 2
                     // 아이 유무가 일치하면 +2
-                    if (breed.kid == hasKid) score += 2
+                    if (breed.kid == hasKid) score += 3
                     // 마당 유무가 일치하면 +1
                     if (breed.yard == hasYard) score++
                     // 활동량이 일치하면 +1
@@ -221,6 +223,7 @@ fun ResultScreen(
 }
 
 // Breed 하나를 표시하는 Composable
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
 
@@ -272,6 +275,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
             ) {
                 // LazyListState를 이용해 스크롤 상태 추적
                 val listState = rememberLazyListState()
+                val flingBehavior = rememberSnapFlingBehavior(listState)
 
                 // Breed가 바뀔 때마다 LazyRow의 스크롤을 0번 인덱스로 초기화함
                 LaunchedEffect(breed) {
@@ -292,8 +296,9 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                     // 두 이미지를 가로 스크롤(LazyRow)
                     androidx.compose.foundation.lazy.LazyRow(
                         modifier = Modifier.fillMaxSize(),
-                        state = listState, // 스크롤 상태 연결
-                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                        state = listState,
+                        flingBehavior = flingBehavior, // 스크롤 상태 연결
+
                     ) {
                         // 첫 번째 아이템
                         item {
