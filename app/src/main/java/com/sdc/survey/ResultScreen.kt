@@ -75,11 +75,14 @@ fun fetchTopMatchingBreedsFromFirestore(
             for (document in querySnapshot.documents) {
                 val breed = document.toObject(Breed::class.java)
                 if (breed != null) {
+                    // 🔹 초대형견 예외 처리
+                    if (selectedSize != "초대형" && breed.size == "초대형") continue
+
                     var score = 0
 
-                    // 크기(사이즈)가 일치하면 +2
+                    // 크기가 일치하면 +2
                     if (breed.size == selectedSize) score += 2
-                    // 아이 유무가 일치하면 +2
+                    // 아이 유무가 일치하면 +3
                     if (breed.kid == hasKid) score += 3
                     // 마당 유무가 일치하면 +1
                     if (breed.yard == hasYard) score++
@@ -87,10 +90,11 @@ fun fetchTopMatchingBreedsFromFirestore(
                     if (breed.activity == selectedActivity) score++
                     // 독립성이 일치하면 +1
                     if (breed.independence == selectedIndependence) score++
-                    // 추가: 탈모량(shedding)이 일치하면 +1
+                    // 추가: 털빠짐(shedding)이 일치하면 +1
                     if (breed.shedding == selectedShedding) score++
                     // 추가: 훈련 난이도(trainlevel)가 일치하면 +1
                     if (breed.trainlevel == selectedTrainlevel) score++
+
 
                     breedScores.add(breed to score)
                 }
@@ -105,6 +109,7 @@ fun fetchTopMatchingBreedsFromFirestore(
             onFailure(e)
         }
 }
+
 
 // Firestore에서 데이터를 가져와 UI에 상위 5개 강아지를 순위와 함께 표시하는 Composable
 @Composable
@@ -269,7 +274,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .width(361.dp)
-                    .height(343.dp),
+                    .height(354.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = androidx.compose.material3.CardDefaults.cardElevation(4.dp)
             ) {
