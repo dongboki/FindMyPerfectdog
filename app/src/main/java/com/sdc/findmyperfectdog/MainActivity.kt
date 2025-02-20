@@ -44,7 +44,7 @@ val AfacadFontFamily = FontFamily(
 fun SurveyNavHost(navController: NavHostController) {
     // 각 설문 항목에 대한 상태 변수
     val selectedSize = remember { mutableStateOf("") }
-    val hasYard = remember { mutableStateOf("") }
+    val selectedYard = remember { mutableStateOf("") }
     val selectedActivity = remember { mutableStateOf("") }
     val selectedIndependence = remember { mutableStateOf("") }
     val hasKid = remember { mutableStateOf("") }
@@ -56,7 +56,7 @@ fun SurveyNavHost(navController: NavHostController) {
             SizeScreen(selectedSize = selectedSize, navController = navController)
         }
         composable("yard_screen") {
-            YardScreen(hasYard = hasYard, navController = navController)
+            YardScreen(selectedYard = selectedYard, navController = navController)
         }
         composable("activity_screen") {
             ActivityScreen(selectedActivity = selectedActivity, navController = navController)
@@ -78,7 +78,7 @@ fun SurveyNavHost(navController: NavHostController) {
         composable("result_screen") {
             ResultScreen(
                 selectedSize = selectedSize.value,
-                hasYard = hasYard.value,
+                selectedYard = selectedYard.value,
                 selectedActivity = selectedActivity.value,
                 selectedIndependence = selectedIndependence.value,
                 hasKid = hasKid.value,

@@ -26,10 +26,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
 
-// 2. 마당 유무 화면
+// 2. 마당 유무 화면 (4가지 주거환경 선택 화면)
+// 사용자에게는 "원룸/오피스텔" 같은 긴 설명을 보여주지만,
+// 실제로는 "소형", "중형", "대형", "농가" 중 하나를 selectedYard에 저장함.
 @Composable
-fun YardScreen(hasYard: MutableState<String>, navController: NavController) {
-    val yesNoOptions = listOf("예", "아니오")
+fun YardScreen(selectedYard: MutableState<String>, navController: NavController) {
+
+    // (1) 긴 설명 -> 짧은 분류 매핑
+    val yardMapping = mapOf(
+        "원룸/오피스텔 (야외공간 없음)" to "소형",
+        "아파트/빌라/다세대 (제한된 야외공간)" to "중형",
+        "단독주택/전원주택 (정원/마당 있음)" to "대형",
+        "농가 (넓은 야외공간 있음)" to "농가"
+    )
+
+    // (2) 사용자에게 보여줄 옵션(긴 설명) 목록
+    val yardOptions = yardMapping.keys.toList()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,45 +50,64 @@ fun YardScreen(hasYard: MutableState<String>, navController: NavController) {
             .systemBarsPadding()
     ) {
         Text(
-            text = "2. 마당 유무",
-
+            text = "2.  주거환경",
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
-        yesNoOptions.forEach { option ->
+
+        // 라디오 버튼: yardOptions 각각 표시
+        yardOptions.forEach { option ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
+                // 현재 selectedYard.value 와 yardMapping[option]이 같은지 비교
                 RadioButton(
-                    selected = hasYard.value == option,
-                    onClick = { hasYard.value = option }
+                    selected = (yardMapping[option] == selectedYard.value),
+                    onClick = {
+                        // "원룸/오피스텔 (야외공간 없음)" -> "소형"
+                        val shortValue = yardMapping[option]
+                        if (shortValue != null) {
+                            selectedYard.value = shortValue
+                        }
+                    }
                 )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp))
+                // 사용자에게는 긴 설명을 그대로 보여줌
+                Text(
+                    text = option,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
         }
+
         Spacer(modifier = Modifier.weight(1f))
+
+        // 다음 버튼
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp) // 높이 60dp 설정
-                .border(1.dp, Color(0xFF999999), RoundedCornerShape(12.dp)) // 보더 추가
+                .height(50.dp)
+                .border(1.dp, Color(0xFF999999), RoundedCornerShape(12.dp))
         ) {
             Button(
-                onClick = { navController.navigate("activity_screen") },
+                onClick = {
+                    // 다음 화면("activity_screen")으로 이동
+                    navController.navigate("activity_screen")
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp), // 버튼 높이도 60dp로 맞춤
-                shape = RoundedCornerShape(12.dp), // 둥근 모서리 설정
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White, // 버튼 배경색 흰색
-                    contentColor = Color.Black // 버튼 글씨색 검정
+                    containerColor = Color.White,
+                    contentColor = Color.Black
                 ),
-                enabled = hasYard.value.isNotEmpty()
+                // "소형"/"중형"/"대형"/"농가" 중 하나가 selectedYard.value에 있어야만 활성화
+                enabled = selectedYard.value.isNotEmpty()
             ) {
                 Text(
                     text = "다음",
-                    fontWeight = FontWeight.SemiBold // 글씨 굵기 SemiBold
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
