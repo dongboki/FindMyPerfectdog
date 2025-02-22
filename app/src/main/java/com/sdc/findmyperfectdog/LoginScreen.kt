@@ -66,12 +66,12 @@ fun LoginScreen(navController: NavController) {
         Text(
             text = "당신의 라이프 스타일에 딱 맞는\n강아지를 추천해드립니다.",
             fontSize = 14.sp,
-            modifier = Modifier
-            , lineHeight = 22.sp,
+            lineHeight = 22.sp,
             fontFamily = PretenderFontFamily
-
         )
-        Spacer(modifier = Modifier.height(180.dp))
+        // 남은 공간을 채워 버튼을 아래로 밀어줍니다.
+        Spacer(modifier = Modifier.weight(1f))
+
         LoginDotsIndicator(
             totalDots = 3,
             selectedIndex = currentIndex,
@@ -80,17 +80,17 @@ fun LoginScreen(navController: NavController) {
         Button(
             onClick = { navController.navigate("home_screen") },
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCA651))
-            , modifier = Modifier.fillMaxWidth(),
-
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCA651)),
+            modifier = Modifier.fillMaxWidth().height(60.dp)
         ) {
             Text(
                 text = "시작하기",
                 fontSize = 26.sp,
                 fontWeight = FontWeight.SemiBold,
-                    lineHeight = 44.sp,
+                lineHeight = 44.sp,
                 fontFamily = PretenderFontFamily
             )
         }
+        Spacer(modifier = Modifier.height(30.dp))
     }
-    }
+}
