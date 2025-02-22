@@ -24,11 +24,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.sdc.findmyperfectdog.PretenderFontFamily
 
 @Composable
 fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: NavController) {
-    // 옵션 리스트: 상, 중, 하
-    val trainLevelOptions = listOf("상", "중", "하")
+    // 옵션 리스트: 어려움, 보통, 쉬움
+    val trainLevelOptions = listOf("어려움", "보통", "쉬움")
 
     Column(
         modifier = Modifier
@@ -39,7 +40,8 @@ fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: Na
         // 제목 표시
         Text(
             text = "6. 훈련 난이도",
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = PretenderFontFamily
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -53,7 +55,12 @@ fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: Na
                     selected = selectedTrainLevel.value == option,
                     onClick = { selectedTrainLevel.value = option }
                 )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp))
+                Text(
+                    text = option,
+                    modifier = Modifier.padding(start = 8.dp),
+                    fontFamily = PretenderFontFamily
+                )
+
             }
         }
 
@@ -78,7 +85,8 @@ fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: Na
             ) {
                 Text(
                     text = "다음",
-                    fontWeight = FontWeight.SemiBold // 글씨 굵기 SemiBold
+                    fontWeight = FontWeight.SemiBold, // 글씨 굵기 SemiBold
+                    fontFamily = PretenderFontFamily
                 )
             }
         }

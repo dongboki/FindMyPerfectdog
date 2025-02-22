@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.sdc.findmyperfectdog.PretenderFontFamily
 
 // 1. 사이즈 선택 화면
 @Composable
@@ -36,8 +36,8 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
             .systemBarsPadding()
     ) {
         Text(
-            text = "1. 사이즈 선택",
-            fontWeight = FontWeight.Bold
+            text = "2. 사이즈 선택",
+            fontWeight = FontWeight.Bold,fontFamily = PretenderFontFamily
         )
         Spacer(modifier = Modifier.height(16.dp))
         sizeOptions.forEach { option ->
@@ -49,7 +49,7 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
                     selected = selectedSize.value == option,
                     onClick = { selectedSize.value = option }
                 )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp))
+                Text(text = option, modifier = Modifier.padding(start = 8.dp),fontFamily = PretenderFontFamily)
             }
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -61,7 +61,7 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
                 .border(1.dp, Color(0xFF999999), RoundedCornerShape(12.dp)) // 보더 추가
         ) {
             Button(
-                onClick = { navController.navigate("yard_screen") },
+                onClick = { navController.navigate("activity_screen") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp), // 버튼 높이도 50dp로 맞춤
@@ -74,7 +74,7 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
             ) {
                 Text(
                     text = "다음",
-                    fontWeight = FontWeight.SemiBold // 글씨 굵기 SemiBold
+                    fontWeight = FontWeight.SemiBold,fontFamily = PretenderFontFamily // 글씨 굵기 SemiBold
                 )
             }
         }

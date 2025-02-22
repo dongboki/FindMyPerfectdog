@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sdc.findmyperfectdog.AfacadFontFamily
+import com.sdc.findmyperfectdog.PretenderFontFamily
 import com.sdc.findmyperfectdog.ui.theme.DotsIndicator
 import com.sdc.findmyperfectdog.ui.theme.ToggleFavoriteIcon
 
@@ -42,8 +43,7 @@ import com.sdc.findmyperfectdog.ui.theme.ToggleFavoriteIcon
 data class Breed(
     val name: String = "",
     val size: String = "",
-    // 🔴 yard를 List<String>으로 수정
-    val yard: List<String> = emptyList(),
+    val home: List<String> = emptyList(),
     val activity: String = "",
     val independence: String = "",
     val kid: String = "",
@@ -56,7 +56,7 @@ data class Breed(
 // Firestore에서 데이터를 가져와 점수를 계산해 상위 5개를 반환
 fun fetchTopMatchingBreedsFromFirestore(
     selectedSize: String,
-    selectedYard: String,
+    selectedHome: String,
     selectedActivity: String,
     selectedIndependence: String,
     hasKid: String,
@@ -67,7 +67,7 @@ fun fetchTopMatchingBreedsFromFirestore(
 ) {
     val firestore = FirebaseFirestore.getInstance()
 
-    firestore.collection("allbreedss")
+    firestore.collection("allbreeds")
         .get()
         .addOnSuccessListener { querySnapshot ->
             val breedScores = mutableListOf<Pair<Breed, Int>>()
@@ -79,12 +79,15 @@ fun fetchTopMatchingBreedsFromFirestore(
 
                     var score = 0
 
-                    // 1) 크기가 일치하면 +2
-                    if (breed.size == selectedSize) score += 2
+                    if (breed.size == selectedSize) {
+                        score += 10
+                    } else {
+                        score -= 5  // 불일치일 때 페널티 -5
+                    }
                     // 2) 아이 유무가 일치하면 +3
                     if (breed.kid == hasKid) score += 3
-                    // 3) 마당 유무(리스트 형태)이면, selectedYard가 breed.yard 안에 있으면 +1
-                    if (selectedYard in breed.yard) {
+                    // 3) 주거환경(리스트 형태)이면, selectedHome가 breed.home 안에 있으면 +1
+                    if (selectedHome in breed.home) {
                         score++
                     }
                     // 4) 활동량
@@ -114,7 +117,7 @@ fun fetchTopMatchingBreedsFromFirestore(
 @Composable
 fun ResultScreen(
     selectedSize: String,
-    selectedYard: String,
+    selectedHome: String,
     selectedActivity: String,
     selectedIndependence: String,
     hasKid: String,
@@ -127,7 +130,7 @@ fun ResultScreen(
 
     LaunchedEffect(
         selectedSize,
-        selectedYard,
+        selectedHome,
         selectedActivity,
         selectedIndependence,
         hasKid,
@@ -139,7 +142,7 @@ fun ResultScreen(
 
         fetchTopMatchingBreedsFromFirestore(
             selectedSize = selectedSize,
-            selectedYard = selectedYard,
+            selectedHome = selectedHome,
             selectedActivity = selectedActivity,
             selectedIndependence = selectedIndependence,
             hasKid = hasKid,
@@ -208,7 +211,8 @@ fun ResultScreen(
                         Text(
                             text = "추천 강아지",
                             fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = PretenderFontFamily
                         )
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -248,11 +252,13 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 text = breed.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
+                fontFamily = PretenderFontFamily ,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
                 text = subTitleText,
-                color = Color.Gray
+                color = Color.Gray,
+                fontFamily = PretenderFontFamily
             )
             Spacer(modifier = Modifier.height(17.dp))
 
@@ -261,6 +267,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 text = breed.name,
                 fontWeight = FontWeight.Normal,
                 fontSize = 16.sp,
+                fontFamily = PretenderFontFamily,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
         }
@@ -271,7 +278,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .width(361.dp)
-                    .height(354.dp),
+                    .height(355.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = androidx.compose.material3.CardDefaults.cardElevation(4.dp)
             ) {
@@ -354,7 +361,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                         )
                         Spacer(modifier = Modifier.width(14.dp))
                         Text(
-                            text = "1000", // 좋아요 수 예시
+                            text = "0", // 좋아요 수 예시
                             color = Color(0xFF001A72),
                             fontSize = 16.sp,
                             fontFamily = AfacadFontFamily,
@@ -363,8 +370,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                     }
                 }
             }
-            Text("강아지 정보")
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(80.dp))
         } else {
             // 2~5순위: 기존 방식(이미지 2장)
             coil.compose.AsyncImage(
@@ -381,48 +387,6 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
-        }
-    }
-}
-
-// 2~5순위 강아지 가로 스크롤
-@Composable
-fun RecommendedRow(
-    breeds: List<Breed>,
-    onBreedClick: (Breed) -> Unit
-) {
-    androidx.compose.foundation.lazy.LazyRow(
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
-    ) {
-        items(breeds.size) { index ->
-            val breed = breeds[index]
-            Column(
-                modifier = Modifier
-                    .size(133.dp)
-                    .padding(vertical = 2.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable {
-                        onBreedClick(breed)
-                    }
-            ) {
-                coil.compose.AsyncImage(
-                    model = breed.youngthumbnail,
-                    contentDescription = breed.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(133.dp)
-                        .height(90.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = breed.name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    maxLines = 1
-                )
-            }
         }
     }
 }

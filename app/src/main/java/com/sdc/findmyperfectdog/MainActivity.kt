@@ -15,11 +15,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sdc.survey.SizeScreen
 import com.sdc.survey.ActivityScreen
+import com.sdc.survey.HomeScreen
 import com.sdc.survey.IndependenceScreen
 import com.sdc.survey.KidScreen
 import com.sdc.survey.ResultScreen
 import com.sdc.survey.SheddingScreen
-import com.sdc.survey.YardScreen
+import com.sdc.survey.HomeScreen
 import com.sdc.survey.TrainLevelScreen
 
 
@@ -44,19 +45,22 @@ val AfacadFontFamily = FontFamily(
 fun SurveyNavHost(navController: NavHostController) {
     // 각 설문 항목에 대한 상태 변수
     val selectedSize = remember { mutableStateOf("") }
-    val selectedYard = remember { mutableStateOf("") }
+    val selectedHome = remember { mutableStateOf("") }
     val selectedActivity = remember { mutableStateOf("") }
     val selectedIndependence = remember { mutableStateOf("") }
     val hasKid = remember { mutableStateOf("") }
     val selectedShedding = remember { mutableStateOf("") }
     val selectedTrainlevel = remember { mutableStateOf("") }
 
-    NavHost(navController = navController, startDestination = "size_screen") {
+    NavHost(navController = navController, startDestination = "login_screen") {
+        composable("login_screen") {
+            LoginScreen( navController = navController)
+        }
+        composable("home_screen") {
+            HomeScreen(selectedHome = selectedHome, navController = navController)
+        }
         composable("size_screen") {
             SizeScreen(selectedSize = selectedSize, navController = navController)
-        }
-        composable("yard_screen") {
-            YardScreen(selectedYard = selectedYard, navController = navController)
         }
         composable("activity_screen") {
             ActivityScreen(selectedActivity = selectedActivity, navController = navController)
@@ -78,7 +82,7 @@ fun SurveyNavHost(navController: NavHostController) {
         composable("result_screen") {
             ResultScreen(
                 selectedSize = selectedSize.value,
-                selectedYard = selectedYard.value,
+                selectedHome = selectedHome.value,
                 selectedActivity = selectedActivity.value,
                 selectedIndependence = selectedIndependence.value,
                 hasKid = hasKid.value,

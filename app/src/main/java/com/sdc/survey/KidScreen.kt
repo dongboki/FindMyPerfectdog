@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.sdc.findmyperfectdog.PretenderFontFamily
 
 // 5. 아이 유무 화면
 @Composable
@@ -36,7 +37,7 @@ fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
     ) {
         Text(
             text = "5. 아이 유무",
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,fontFamily = PretenderFontFamily
         )
         Spacer(modifier = Modifier.height(16.dp))
         yesNoOptions.forEach { option ->
@@ -48,7 +49,7 @@ fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
                     selected = hasKid.value == option,
                     onClick = { hasKid.value = option }
                 )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp))
+                Text(text = option, modifier = Modifier.padding(start = 8.dp),fontFamily = PretenderFontFamily)
             }
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -72,7 +73,8 @@ fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
             ) {
                 Text(
                     text = "다음",
-                    fontWeight = FontWeight.SemiBold // 글씨 굵기 SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = PretenderFontFamily// 글씨 굵기 SemiBold
                 )
             }
         }

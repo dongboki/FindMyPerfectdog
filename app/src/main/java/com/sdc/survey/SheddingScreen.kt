@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.sdc.findmyperfectdog.PretenderFontFamily
 
 @Composable
 fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavController) {
@@ -39,7 +40,8 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
         // 제목 텍스트를 표시합니다.
         Text(
             text = "7. 털빠짐 정도",
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = PretenderFontFamily
         )
         // 제목과 옵션 사이에 간격을 줍니다.
         Spacer(modifier = Modifier.height(16.dp))
@@ -54,7 +56,7 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
                     selected = selectedShedding.value == option,
                     onClick = { selectedShedding.value = option }
                 )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp))
+                Text(text = option, modifier = Modifier.padding(start = 8.dp),fontFamily = PretenderFontFamily)
             }
         }
 
@@ -80,7 +82,7 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
             ) {
                 Text(
                     text = "다음",
-                    fontWeight = FontWeight.SemiBold // 글씨 굵기 SemiBold
+                    fontWeight = FontWeight.SemiBold,fontFamily = PretenderFontFamily // 글씨 굵기 SemiBold
                 )
             }
         }
