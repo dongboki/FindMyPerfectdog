@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sdc.findmyperfectdog.AfacadFontFamily
 import com.sdc.findmyperfectdog.PretenderFontFamily
@@ -128,6 +131,8 @@ fun ResultScreen(
     val isLoading = remember { mutableStateOf(true) }
     val errorMessage = remember { mutableStateOf<String?>(null) }
 
+
+
     LaunchedEffect(
         selectedSize,
         selectedHome,
@@ -158,6 +163,7 @@ fun ResultScreen(
             }
         )
     }
+
 
     when {
         isLoading.value -> {
@@ -223,6 +229,7 @@ fun ResultScreen(
                             val newList = listOf(clickedBreed) + currentList.filter { it != clickedBreed }
                             topBreeds.value = newList
                         }
+
                     }
                 }
             }
@@ -234,7 +241,6 @@ fun ResultScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
-
     val subTitleText = when (breed.size) {
         "대형" -> "‘함께 뛰놀기 딱 좋은 반려견’"
         "중형" -> "‘도시 생활과 자연을 모두 즐길 수 있는 반려견’"
@@ -246,13 +252,13 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        // 이름 표시
+        // 🔹 강아지 이름과 설명
         if (isFirstRank) {
             Text(
                 text = breed.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
-                fontFamily = PretenderFontFamily ,
+                fontFamily = PretenderFontFamily,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
@@ -262,84 +268,45 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
             )
             Spacer(modifier = Modifier.height(17.dp))
 
-        } else {
-            Text(
-                text = breed.name,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                fontFamily = PretenderFontFamily,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-        }
+            // 🔹 페이지 상태 저장
+            val pagerState = rememberPagerState { 2 }
 
-        // 1순위일 때 큰 카드
-        if (isFirstRank) {
+            LaunchedEffect(breed) {
+                pagerState.scrollToPage(0)
+            }
+
             androidx.compose.material3.Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .width(361.dp)
-                    .height(355.dp),
+                    .height(370.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = androidx.compose.material3.CardDefaults.cardElevation(4.dp)
             ) {
-                val listState = rememberLazyListState()
-                val flingBehavior = rememberSnapFlingBehavior(listState)
-
-                LaunchedEffect(breed) {
-                    listState.scrollToItem(0)
-                }
-
-                val currentIndex by remember {
-                    derivedStateOf { listState.firstVisibleItemIndex }
-                }
-
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(16.dp))
                         .background(Color.White)
                 ) {
-                    // 가로 스크롤로 어린 썸네일, 성견 썸네일
-                    androidx.compose.foundation.lazy.LazyRow(
-                        modifier = Modifier.fillMaxSize(),
-                        state = listState,
-                        flingBehavior = flingBehavior
-                    ) {
-                        item {
-                            coil.compose.AsyncImage(
-                                model = breed.youngthumbnail,
-                                contentDescription = "어린 썸네일",
-                                modifier = Modifier
-                                    .fillParentMaxWidth()
-                                    .fillParentMaxHeight(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        item {
-                            coil.compose.AsyncImage(
-                                model = breed.oldthumbnail,
-                                contentDescription = "성견 썸네일",
-                                modifier = Modifier
-                                    .fillParentMaxWidth()
-                                    .fillParentMaxHeight(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                    // 🔹 HorizontalPager (이미지 슬라이더)
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        val imageUrl = if (page == 0) breed.youngthumbnail else breed.oldthumbnail
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = if (page == 0) "어린 썸네일" else "성견 썸네일",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
                     }
 
-                    // DotIndicator
-                    DotsIndicator(
-                        totalDots = 2,
-                        selectedIndex = currentIndex,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 20.dp)
-                    )
-
-                    // 하트 아이콘 (토글)
+                    // 🔹 하트 아이콘 (즐겨찾기)
                     ToggleFavoriteIcon()
 
-                    // 좋아요 수 표시
+                    // 🔹 좋아요 수 표시
                     androidx.compose.foundation.layout.Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -370,17 +337,42 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                     }
                 }
             }
+
+            // 🔹 Dot Indicator를 카드 아래로 이동
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                DotsIndicator(
+                    totalDots = 2,
+                    selectedIndex = pagerState.currentPage
+                )
+            }
+
+
             Spacer(modifier = Modifier.height(80.dp))
         } else {
-            // 2~5순위: 기존 방식(이미지 2장)
-            coil.compose.AsyncImage(
+            Text(
+                text = breed.name,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                fontFamily = PretenderFontFamily,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+            // 🔹 2~5순위: 기존 방식 (이미지 2장 표시)
+            AsyncImage(
                 model = breed.youngthumbnail,
                 contentDescription = "어린 썸네일",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
-            coil.compose.AsyncImage(
+            AsyncImage(
                 model = breed.oldthumbnail,
                 contentDescription = "성견 썸네일",
                 modifier = Modifier

@@ -1,5 +1,8 @@
 package com.sdc.findmyperfectdog.ui.theme
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -52,15 +56,22 @@ fun LoginDotsIndicator(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         repeat(totalDots) { index ->
+            val dotWidth by animateDpAsState(
+                targetValue = if (index == selectedIndex) 32.dp else 8.dp,
+                animationSpec = tween(durationMillis = 300)
+            )
+
+            val dotColor by animateColorAsState(
+                targetValue = if (index == selectedIndex) Color(0xFFFFAE00) else Color(0xFFD9D9D9),
+                animationSpec = tween(durationMillis = 300)
+            )
+
             Box(
                 modifier = Modifier
-                    .width(if (index == selectedIndex) 32.dp else 8.dp)
+                    .width(dotWidth)
                     .height(8.dp)
                     .clip(RoundedCornerShape(100.dp))
-                    .background(
-                        if (index == selectedIndex) Color(0xFFFFAE00) // 주황색
-                        else Color(0xFFD9D9D9) // 회색
-                    )
+                    .background(dotColor)
             )
         }
     }

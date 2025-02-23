@@ -1,7 +1,12 @@
 package com.sdc.findmyperfectdog
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,22 +14,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,9 +50,16 @@ val PretenderFontFamily = FontFamily(
 )
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginScreen(navController: NavController) {
-    var currentIndex by remember { mutableStateOf(0) }
+    val pages = listOf(
+        Pair(R.drawable.ic_logindog, "Find Your Dog" to "당신의 라이프 스타일에 딱 맞는\n강아지를 추천해드립니다."),
+        Pair(R.drawable.ic_launcher_background, "Best Companion" to "당신과 함께할 완벽한 반려견을 찾아보세요."),
+        Pair(R.drawable.ic_launcher_background, "Premium Pet Shop" to "소중한 반려견을 위한 특별한 쇼핑을 시작해보세요!")
+    )
+
+    val pagerState = rememberPagerState { pages.size } // 총 페이지 개수 설정
 
     Column(
         modifier = Modifier
@@ -49,33 +68,56 @@ fun LoginScreen(navController: NavController) {
             .padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(200.dp))
-        Image(
-            painter = painterResource(id = R.drawable.ic_logindog),
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.height(18.dp))
-        Text(
-            text = "Find Your Dog",
-            fontSize = 32.sp,
-            lineHeight = 44.sp,
-            letterSpacing = -(0.4).sp,
-            fontFamily = PretenderFontFamily
-        )
-        Spacer(modifier = Modifier.height(14.dp))
-        Text(
-            text = "당신의 라이프 스타일에 딱 맞는\n강아지를 추천해드립니다.",
-            fontSize = 14.sp,
-            lineHeight = 22.sp,
-            fontFamily = PretenderFontFamily
-        )
+        Spacer(modifier = Modifier.height(200.dp)) // 상단 여백 조정
+
+        // 🔹 HorizontalPager로 이미지 + 텍스트 슬라이더 적용
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(330.dp) // 이미지 + 텍스트 높이 조절
+        ) { page ->
+            val (imageRes, textContent) = pages[page]
+            val (title, subtitle) = textContent
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
+            ) {
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp), // 이미지 크기 조정
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Text(
+                    text = title,
+                    fontSize = 32.sp,
+                    lineHeight = 44.sp,
+                    letterSpacing = (-0.4).sp,
+                    fontFamily = PretenderFontFamily
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 14.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = PretenderFontFamily,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
         // 남은 공간을 채워 버튼을 아래로 밀어줍니다.
         Spacer(modifier = Modifier.weight(1f))
 
         LoginDotsIndicator(
-            totalDots = 3,
-            selectedIndex = currentIndex,
+            totalDots = pages.size,
+            selectedIndex = pagerState.currentPage
         )
+
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = { navController.navigate("home_screen") },
