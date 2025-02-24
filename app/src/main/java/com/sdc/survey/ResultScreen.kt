@@ -279,7 +279,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .width(361.dp)
-                    .height(370.dp),
+                    .height(360.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = androidx.compose.material3.CardDefaults.cardElevation(4.dp)
             ) {
@@ -354,7 +354,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
             }
 
 
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(50.dp))
         } else {
             Text(
                 text = breed.name,
