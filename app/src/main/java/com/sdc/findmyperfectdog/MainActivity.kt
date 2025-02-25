@@ -88,6 +88,7 @@ fun SurveyNavHost(navController: NavHostController) {
                 hasKid = hasKid.value,
                 selectedShedding = selectedShedding.value,
                 selectedTrainlevel = selectedTrainlevel.value
+                ,navController = navController
             )
         }
     }

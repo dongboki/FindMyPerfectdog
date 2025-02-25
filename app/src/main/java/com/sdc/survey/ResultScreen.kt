@@ -1,5 +1,6 @@
 package com.sdc.survey
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sdc.findmyperfectdog.AfacadFontFamily
@@ -126,7 +130,6 @@ fun fetchTopMatchingBreedsFromFirestore(
 }
 
 
-
 // 상위 5개 강아지를 UI에 표시하는 Composable
 @Composable
 fun ResultScreen(
@@ -136,12 +139,15 @@ fun ResultScreen(
     selectedIndependence: String,
     hasKid: String,
     selectedShedding: String,
-    selectedTrainlevel: String
+    selectedTrainlevel: String,
+    navController: NavController
 ) {
     val topBreeds = remember { mutableStateOf<List<Breed>>(emptyList()) }
     val isLoading = remember { mutableStateOf(true) }
     val errorMessage = remember { mutableStateOf<String?>(null) }
 
+    BackHandler {
+    }
 
 
     LaunchedEffect(
@@ -237,15 +243,35 @@ fun ResultScreen(
                         RecommendedRow(otherBreeds) { clickedBreed ->
                             // 클릭된 강아지를 1순위로 교체
                             val currentList = topBreeds.value
-                            val newList = listOf(clickedBreed) + currentList.filter { it != clickedBreed }
+                            val newList =
+                                listOf(clickedBreed) + currentList.filter { it != clickedBreed }
                             topBreeds.value = newList
                         }
+                        Spacer(modifier = Modifier.weight(1f))
 
+                        // 🔹 다시하기 버튼 추가
+                        Button(
+                            onClick = { navController.navigate("Login_screen") },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCA651)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(60.dp)
+                        ) {
+                            Text(
+                                text = "다시하기",
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                lineHeight = 44.sp,
+                                fontFamily = PretenderFontFamily
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
 }
 
 // Breed 하나를 표시하는 Composable
@@ -314,8 +340,8 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                         )
                     }
 
-                    // 🔹 하트 아이콘 (즐겨찾기)
-                    ToggleFavoriteIcon()
+//                    🔹 하트 아이콘 (즐겨찾기)
+//                    ToggleFavoriteIcon()
 
                     // 🔹 좋아요 수 표시
                     androidx.compose.foundation.layout.Row(

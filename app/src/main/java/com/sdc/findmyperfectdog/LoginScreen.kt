@@ -56,7 +56,7 @@ fun LoginScreen(navController: NavController) {
     val pages = listOf(
         Pair(R.drawable.ic_logindog, "Find Your Dog" to "당신의 라이프 스타일에 딱 맞는\n강아지를 추천해드립니다."),
         Pair(R.drawable.ic_launcher_background, "Best Companion" to "당신과 함께할 완벽한 반려견을 찾아보세요."),
-        Pair(R.drawable.ic_launcher_background, "Premium Pet Shop" to "소중한 반려견을 위한 특별한 쇼핑을 시작해보세요!")
+        Pair(R.drawable.ic_petstore, "Premium Pet Shop" to "소중한 반려견을 위한 특별한 쇼핑을 시작해보세요!")
     )
 
     val pagerState = rememberPagerState { pages.size } // 총 페이지 개수 설정
@@ -68,14 +68,14 @@ fun LoginScreen(navController: NavController) {
             .padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(200.dp)) // 상단 여백 조정
+        Spacer(modifier = Modifier.height(150.dp)) // 상단 여백 조정
 
         // 🔹 HorizontalPager로 이미지 + 텍스트 슬라이더 적용
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(330.dp) // 이미지 + 텍스트 높이 조절
+                .height(380.dp) // 이미지 + 텍스트 높이 조절
         ) { page ->
             val (imageRes, textContent) = pages[page]
             val (title, subtitle) = textContent
@@ -89,13 +89,13 @@ fun LoginScreen(navController: NavController) {
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp), // 이미지 크기 조정
+                        .height(250.dp), // 이미지 크기 조정
                 )
                 Spacer(modifier = Modifier.height(18.dp))
 
                 Text(
                     text = title,
-                    fontSize = 32.sp,
+                    fontSize = 34.sp,
                     lineHeight = 44.sp,
                     letterSpacing = (-0.4).sp,
                     fontFamily = PretenderFontFamily
@@ -103,7 +103,7 @@ fun LoginScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = subtitle,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     lineHeight = 22.sp,
                     fontFamily = PretenderFontFamily,
                     textAlign = TextAlign.Center
