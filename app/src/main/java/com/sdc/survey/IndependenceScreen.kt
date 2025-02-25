@@ -36,7 +36,7 @@ fun IndependenceScreen(selectedIndependence: MutableState<String>, navController
             .systemBarsPadding()
     ) {
         Text(
-            text = "4. 독립성",
+            text = "4. 강아지의 독립성",
             fontWeight = FontWeight.Bold,
             fontFamily = PretenderFontFamily
         )

@@ -2,9 +2,6 @@ package com.sdc.survey
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,8 +19,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -77,44 +71,61 @@ fun fetchTopMatchingBreedsFromFirestore(
             for (document in querySnapshot.documents) {
                 val breed = document.toObject(Breed::class.java)
                 if (breed != null) {
-                    // 🔹 초대형견 예외 처리
+                    // 초대형견 예외 처리
                     if (selectedSize != "초대형" && breed.size == "초대형") continue
+                    // 아이가 있는 경우, 아이 친화적이지 않은 견종 건너뛰기
+                    if (hasKid == "예" && breed.kid == "아니오") continue
 
                     var score = 0
 
-                    if (breed.size == selectedSize) {
-                        score += 10
-                    } else {
-                        score -= 5  // 불일치일 때 페널티 -5
-                    }
-                    // 2) 아이 유무가 일치하면 +3
-                    if (breed.kid == hasKid) score += 3
-                    // 3) 주거환경(리스트 형태)이면, selectedHome가 breed.home 안에 있으면 +1
-                    if (selectedHome in breed.home) {
-                        score++
-                    }
-                    // 4) 활동량
-                    if (breed.activity == selectedActivity) score++
-                    // 5) 독립성
-                    if (breed.independence == selectedIndependence) score++
-                    // 6) 털빠짐
-                    if (breed.shedding == selectedShedding) score++
-                    // 7) 훈련 난이도
-                    if (breed.trainlevel == selectedTrainlevel) score++
+                    // 각 조건별 함수 호출로 점수 계산
+                    score += calculateSizeScore(breed.size, selectedSize)
+                    score += calculateKidScore(breed.kid, hasKid)
+                    score += calculateHomeScore(selectedHome, breed.size, breed.home)
+                    score += calculateActivityScore(breed.activity, selectedActivity)
+                    score += calculateIndependenceScore(breed.independence, selectedIndependence)
+                    score += calculateSheddingScore(breed.shedding, selectedShedding)
+                    score += calculateTrainLevelScore(breed.trainlevel, selectedTrainlevel)
 
                     breedScores.add(breed to score)
                 }
             }
-            // 점수를 내림차순으로 정렬 후 상위 5개
-            val topFive = breedScores.sortedByDescending { it.second }
-                .take(5)
-                .map { it.first }
-            onSuccess(topFive)
+
+            // 점수를 내림차순 정렬 (동일 점수인 경우 Firestore에서 가져온 순서를 그대로 유지)
+            val sorted = breedScores.sortedByDescending { it.second }
+            if (sorted.size <= 5) {
+                onSuccess(sorted.map { it.first })
+                return@addOnSuccessListener
+            }
+
+            // 상위 3위는 고정
+            val fixedTop = sorted.take(3)
+            val remainder = sorted.drop(3)
+            val required = 2  // 최종적으로 5개가 되어야 하므로, remainder에서 2개 선택
+
+            if (remainder.size <= required) {
+                onSuccess(fixedTop.map { it.first } + remainder.map { it.first })
+                return@addOnSuccessListener
+            }
+
+            // remainder에서 tied 그룹 처리: 4번째(전체 순위에서 4번째)의 점수를 기준으로 tied 그룹 결정
+            val tieScore = remainder[required - 1].second // remainder[1]의 점수가 tieScore
+            val fixedPart = remainder.takeWhile { it.second > tieScore }
+            val tieGroup = remainder.drop(fixedPart.size).takeWhile { it.second == tieScore }
+            val numberToSelect = required - fixedPart.size
+            val selectedFromTie = tieGroup.shuffled().take(numberToSelect)
+            val chosen = fixedPart + selectedFromTie
+
+            val finalList = fixedTop + chosen
+
+            onSuccess(finalList.map { it.first })
         }
         .addOnFailureListener { e ->
             onFailure(e)
         }
 }
+
+
 
 // 상위 5개 강아지를 UI에 표시하는 Composable
 @Composable
