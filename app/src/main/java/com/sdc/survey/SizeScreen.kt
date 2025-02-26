@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
 
@@ -37,7 +38,9 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
     ) {
         Text(
             text = "2. 사이즈 선택",
-            fontWeight = FontWeight.Bold,fontFamily = PretenderFontFamily
+            fontWeight = FontWeight.Bold,
+            fontFamily = PretenderFontFamily,
+            fontSize = 16.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
         sizeOptions.forEach { option ->

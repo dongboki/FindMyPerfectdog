@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
 
@@ -41,7 +42,8 @@ fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: Na
         Text(
             text = "6. 훈련 난이도",
             fontWeight = FontWeight.Bold,
-            fontFamily = PretenderFontFamily
+            fontFamily = PretenderFontFamily,
+            fontSize = 16.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import com.sdc.findmyperfectdog.PretenderFontFamily
 
 // 2. 주거환경 화면 (4가지 주거환경 선택 화면)
@@ -51,7 +52,8 @@ fun HomeScreen(selectedHome: MutableState<String>, navController: NavController)
         Text(
             text = "1.  주거환경",
             fontWeight = FontWeight.Bold,
-            fontFamily = PretenderFontFamily
+            fontFamily = PretenderFontFamily,
+            fontSize = 16.sp,
         )
         Spacer(modifier = Modifier.height(16.dp))
 

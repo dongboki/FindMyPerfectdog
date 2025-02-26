@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
 
@@ -37,8 +38,10 @@ fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
     ) {
         Text(
             text = "5. 아이 유무",
-            fontWeight = FontWeight.Bold,fontFamily = PretenderFontFamily
-        )
+            fontWeight = FontWeight.Bold,
+            fontFamily = PretenderFontFamily,
+            fontSize = 16.sp
+            )
         Spacer(modifier = Modifier.height(16.dp))
         yesNoOptions.forEach { option ->
             Row(
@@ -49,7 +52,11 @@ fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
                     selected = hasKid.value == option,
                     onClick = { hasKid.value = option }
                 )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp),fontFamily = PretenderFontFamily)
+                Text(
+                    text = option,
+                    modifier = Modifier.padding(start = 8.dp),
+                    fontFamily = PretenderFontFamily
+                )
             }
         }
         Spacer(modifier = Modifier.weight(1f))

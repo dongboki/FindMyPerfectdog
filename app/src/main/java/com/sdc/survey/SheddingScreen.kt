@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
 
@@ -41,7 +42,8 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
         Text(
             text = "7. 털빠짐 정도",
             fontWeight = FontWeight.Bold,
-            fontFamily = PretenderFontFamily
+            fontFamily = PretenderFontFamily,
+            fontSize = 16.sp
         )
         // 제목과 옵션 사이에 간격을 줍니다.
         Spacer(modifier = Modifier.height(16.dp))
