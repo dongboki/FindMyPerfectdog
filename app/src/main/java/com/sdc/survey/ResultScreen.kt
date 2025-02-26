@@ -237,7 +237,7 @@ fun ResultScreen(
                             fontWeight = FontWeight.Bold,
                             fontFamily = PretenderFontFamily
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         // 나머지를 가로 스크롤로 표시 (RecommendedRow)
                         RecommendedRow(otherBreeds) { clickedBreed ->
@@ -247,7 +247,8 @@ fun ResultScreen(
                                 listOf(clickedBreed) + currentList.filter { it != clickedBreed }
                             topBreeds.value = newList
                         }
-                        Spacer(modifier = Modifier.weight(1f))
+
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         // 🔹 다시하기 버튼 추가
                         Button(
@@ -256,15 +257,16 @@ fun ResultScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCA651)),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(60.dp)
+                                .height(50.dp)
                         ) {
                             Text(
                                 text = "다시하기",
-                                fontSize = 26.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                lineHeight = 44.sp,
+                                lineHeight = 24.sp,
                                 fontFamily = PretenderFontFamily
                             )
+                            Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
                 }
@@ -376,7 +378,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
             }
 
             // 🔹 Dot Indicator를 카드 아래로 이동
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Box(
                 modifier = Modifier
@@ -390,8 +392,6 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 )
             }
 
-
-            Spacer(modifier = Modifier.height(50.dp))
         } else {
             Text(
                 text = breed.name,

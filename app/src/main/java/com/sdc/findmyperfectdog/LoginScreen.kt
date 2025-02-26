@@ -109,13 +109,13 @@ fun LoginScreen(navController: NavController) {
             onClick = { navController.navigate("home_screen") },
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCA651)),
-            modifier = Modifier.fillMaxWidth().height(60.dp)
+            modifier = Modifier.fillMaxWidth().height(50.dp)
         ) {
             Text(
                 text = "시작하기",
-                fontSize = 26.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                lineHeight = 44.sp,
+                lineHeight = 24.sp,
                 fontFamily = PretenderFontFamily
             )
         }
