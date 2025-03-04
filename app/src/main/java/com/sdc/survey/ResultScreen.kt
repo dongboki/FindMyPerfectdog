@@ -51,7 +51,8 @@ data class Breed(
     val shedding: String = "",
     val trainlevel: String = "",
     val youngthumbnail: String = "",
-    val oldthumbnail: String = ""
+    val oldthumbnail: String = "",
+    val thirdthumbnail: String = ""
 )
 
 // Firestore에서 데이터를 가져와 점수를 계산해 상위 5개를 반환
@@ -77,14 +78,22 @@ fun fetchTopMatchingBreedsFromFirestore(
                 if (breed != null) {
                     // 초대형견 예외 처리
                     if (selectedSize != "초대형" && breed.size == "초대형") continue
-                    // 아이가 있는 경우, 아이 친화적이지 않은 견종 건너뛰기
-                    if (hasKid == "예" && breed.kid == "아니오") continue
+
+                    // 아이가 있는 경우, 위험 견종(맹견 계열)은 calculateKidScore에서 null을 반환하므로 건너뜁니다.
+                    val kidScore = calculateKidScore(breed.name, hasKid)
+                    if (hasKid == "예" && kidScore == null) continue
 
                     var score = 0
+                    // calculateKidScore의 결과가 null이 아닐 경우에만 점수를 추가합니다.
+                    if (kidScore != null) {
+                        score += kidScore
+                    }
+                    if (breed.name == "기슈견" || breed.name == "기슈") {
+                        score -= 2
+                    }
 
-                    // 각 조건별 함수 호출로 점수 계산
+                    // 각 조건별 점수 계산
                     score += calculateSizeScore(breed.size, selectedSize)
-                    score += calculateKidScore(breed.kid, hasKid)
                     score += calculateHomeScore(selectedHome, breed.size, breed.home)
                     score += calculateActivityScore(breed.activity, selectedActivity)
                     score += calculateIndependenceScore(breed.independence, selectedIndependence)
@@ -130,7 +139,6 @@ fun fetchTopMatchingBreedsFromFirestore(
 }
 
 
-// 상위 5개 강아지를 UI에 표시하는 Composable
 @Composable
 fun ResultScreen(
     selectedSize: String,
@@ -148,7 +156,6 @@ fun ResultScreen(
 
     BackHandler {
     }
-
 
     LaunchedEffect(
         selectedSize,
@@ -180,7 +187,6 @@ fun ResultScreen(
             }
         )
     }
-
 
     when {
         isLoading.value -> {
@@ -216,41 +222,45 @@ fun ResultScreen(
                 // 2) 나머지 강아지들(2~5순위)
                 val otherBreeds = topBreeds.value.drop(1)
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(22.dp)
-                ) {
-                    // 1순위 BreedItem
-                    BreedItem(
-                        breed = firstBreed,
-                        isFirstRank = true
-                    )
+                // 전체 화면을 Box로 감싸기
+                Box(modifier = Modifier.fillMaxSize()) {
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 추천 강아지가 있을 때만 표시
-                    if (otherBreeds.isNotEmpty()) {
-                        Text(
-                            text = "추천 강아지",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = PretenderFontFamily
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // 나머지를 가로 스크롤로 표시 (RecommendedRow)
-                        RecommendedRow(otherBreeds) { clickedBreed ->
-                            // 클릭된 강아지를 1순위로 교체
-                            val currentList = topBreeds.value
-                            val newList =
-                                listOf(clickedBreed) + currentList.filter { it != clickedBreed }
-                            topBreeds.value = newList
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 22.dp, end = 22.dp, top = 16.dp)
+                    ) {
+                        // 1순위 강아지
+                        Box(modifier = Modifier.weight(0.7f)) {
+                            BreedItem(
+                                breed = firstBreed,
+                                isFirstRank = true
+                            )
                         }
+                        // 원하는 30.dp 간격
+                        Spacer(modifier = Modifier.height(30.dp))
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // 🔹 다시하기 버튼 추가
+                        // 추천 강아지 섹션
+                        if (otherBreeds.isNotEmpty()) {
+                            Text(
+                                text = "추천 강아지",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = PretenderFontFamily
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .weight(0.25f)
+                                    .fillMaxWidth()
+                            ) {
+                                RecommendedRow(otherBreeds) { clickedBreed ->
+                                    val currentList = topBreeds.value
+                                    val newList = listOf(clickedBreed) + currentList.filter { it != clickedBreed }
+                                    topBreeds.value = newList
+                                }
+                            }
+                        }
+                        // 버튼 위 Spacer 제거
                         Button(
                             onClick = { navController.navigate("Login_screen") },
                             shape = RoundedCornerShape(16.dp),
@@ -258,6 +268,7 @@ fun ResultScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(50.dp)
+
                         ) {
                             Text(
                                 text = "다시하기",
@@ -266,14 +277,14 @@ fun ResultScreen(
                                 lineHeight = 24.sp,
                                 fontFamily = PretenderFontFamily
                             )
-                            Spacer(modifier = Modifier.height(20.dp))
                         }
+                        // 하단 여백 유지 (필요 시 조정)
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
             }
         }
     }
-
 }
 
 // Breed 하나를 표시하는 Composable
@@ -308,7 +319,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
             Spacer(modifier = Modifier.height(17.dp))
 
             // 🔹 페이지 상태 저장
-            val pagerState = rememberPagerState { 2 }
+            val pagerState = rememberPagerState { 3 }
 
             LaunchedEffect(breed) {
                 pagerState.scrollToPage(0)
@@ -318,7 +329,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .width(361.dp)
-                    .height(360.dp),
+                    .height(355.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = androidx.compose.material3.CardDefaults.cardElevation(4.dp)
             ) {
@@ -333,47 +344,71 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                         state = pagerState,
                         modifier = Modifier.fillMaxSize()
                     ) { page ->
-                        val imageUrl = if (page == 0) breed.youngthumbnail else breed.oldthumbnail
-                        AsyncImage(
-                            model = imageUrl,
-                            contentDescription = if (page == 0) "어린 썸네일" else "성견 썸네일",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
+                        when (page) {
+                            0 -> {
+                                // 첫 번째 페이지 - 어린 썸네일
+                                AsyncImage(
+                                    model = breed.youngthumbnail,
+                                    contentDescription = "어린 썸네일",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
+                            1 -> {
+                                // 두 번째 페이지 - 성견 썸네일
+                                AsyncImage(
+                                    model = breed.oldthumbnail,
+                                    contentDescription = "성견 썸네일",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            // 세 번째 페이지 - 예쁜 이미지
+                            2 -> {
+                                AsyncImage(
+                                    model = breed.thirdthumbnail    ,
+                                    contentDescription = "추가 이미지",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
                     }
+
 
 //                    🔹 하트 아이콘 (즐겨찾기)
-//                    ToggleFavoriteIcon()
+                    ToggleFavoriteIcon()
 
                     // 🔹 좋아요 수 표시
-                    androidx.compose.foundation.layout.Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(20.dp)
-                            .height(32.dp)
-                            .width(90.dp)
-                            .background(
-                                color = Color(0xFFFFFFFF),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .padding(horizontal = 10.dp)
-                    ) {
-                        androidx.compose.material3.Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.ThumbUp,
-                            contentDescription = "Likes",
-                            tint = Color(0xFF001A72),
-                            modifier = Modifier.size(13.dp)
-                        )
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Text(
-                            text = "0", // 좋아요 수 예시
-                            color = Color(0xFF001A72),
-                            fontSize = 16.sp,
-                            fontFamily = AfacadFontFamily,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                    }
+//                    androidx.compose.foundation.layout.Row(
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        modifier = Modifier
+//                            .align(Alignment.BottomEnd)
+//                            .padding(20.dp)
+//                            .height(32.dp)
+//                            .width(90.dp)
+//                            .background(
+//                                color = Color(0xFFFFFFFF),
+//                                shape = RoundedCornerShape(16.dp)
+//                            )
+//                            .padding(horizontal = 10.dp)
+//                    ) {
+//                        androidx.compose.material3.Icon(
+//                            imageVector = androidx.compose.material.icons.Icons.Default.ThumbUp,
+//                            contentDescription = "Likes",
+//                            tint = Color(0xFF001A72),
+//                            modifier = Modifier.size(13.dp)
+//                        )
+//                        Spacer(modifier = Modifier.width(14.dp))
+//                        Text(
+//                            text = "0", // 좋아요 수 예시
+//                            color = Color(0xFF001A72),
+//                            fontSize = 16.sp,
+//                            fontFamily = AfacadFontFamily,
+//                            modifier = Modifier.padding(end = 8.dp)
+//                        )
+//                    }
                 }
             }
 
@@ -387,7 +422,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                 contentAlignment = Alignment.Center
             ) {
                 DotsIndicator(
-                    totalDots = 2,
+                    totalDots = 3,
                     selectedIndex = pagerState.currentPage
                 )
             }
@@ -419,3 +454,4 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
         }
     }
 }
+
