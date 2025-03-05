@@ -25,7 +25,7 @@ fun calculateKidScore(breedName: String, hasKid: String): Int? {
         if (breedName in dangerousBreeds) null else 2
     } else {
         // 아이가 없는 경우는 무조건 2점을 반환
-        2
+        3
     }
 }
 
@@ -44,9 +44,9 @@ fun calculateHomeScore(selectedHome: String, breedSize: String, breedHome: List<
             else if (breedSize == "소형") score += 1
         }
         "대형" -> {
-            if (breedSize == "대형") score += 2
+            if (breedSize == "대형") score += 3
             else if (breedSize == "중형") score += 1
-            else if (breedSize == "소형") score += 1
+            else if (breedSize == "소형") score += 0
         }
         "초대형" -> {
             if (breedSize == "초대형") score += 2

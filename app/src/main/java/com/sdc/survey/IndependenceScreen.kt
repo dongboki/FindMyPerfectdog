@@ -47,7 +47,12 @@ fun IndependenceScreen(selectedIndependence: MutableState<String>, navController
             .systemBarsPadding()
     ) {
 
-        HelpTextRow()
+        Text(
+            text = "4. 강아지의 독립성",
+            fontWeight = FontWeight.Bold,
+            fontFamily = PretenderFontFamily,
+            fontSize = 16.sp,
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         independenceOptions.forEach { option ->
@@ -89,48 +94,5 @@ fun IndependenceScreen(selectedIndependence: MutableState<String>, navController
                 )
             }
         }
-    }
-}
-
-@Composable
-fun HelpTextRow() {
-    // 도움말 다이얼로그 표시 여부 상태 변수
-    var showDialog by remember { mutableStateOf(false) }
-
-    // Row 내부에 텍스트와 도움말 아이콘 배치
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "4. 강아지의 독립성",
-            fontWeight = FontWeight.Bold,
-            fontFamily = PretenderFontFamily,
-            fontSize = 16.sp,
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(
-            onClick = { showDialog = true }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = "도움말 아이콘"
-            )
-        }
-    }
-
-    // 아이콘 클릭 시 다이얼로그 표시
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("강아지의 독립성") },
-            text = { Text("※ 독립성이 낮을 수록 강아지는 외로워합니다.") },
-            confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("확인", color= Color.Black)
-                }
-            },
-            containerColor = Color.White
-        )
     }
 }
