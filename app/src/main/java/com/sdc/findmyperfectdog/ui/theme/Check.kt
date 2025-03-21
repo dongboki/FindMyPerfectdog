@@ -29,7 +29,7 @@ fun Check(selected: Boolean, text: String) {
         Text(
             text = text, // ✅ 텍스트 추가
             fontSize = 12.sp,
-            color = Color.Black
+            color = if (selected) Color.Black else Color.Gray
         )
     }
 }

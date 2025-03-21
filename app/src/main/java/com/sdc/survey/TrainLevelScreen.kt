@@ -2,6 +2,7 @@
 package com.sdc.survey
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
+import com.sdc.findmyperfectdog.ui.theme.BackIcon
+import com.sdc.findmyperfectdog.ui.theme.Check
+import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 @Composable
 fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: NavController) {
@@ -38,6 +42,7 @@ fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: Na
             .padding(16.dp)
             .systemBarsPadding()
     ) {
+        BackIcon(navController = navController, step = 6)
         // 제목 표시
         Text(
             text = "6. 훈련 난이도",
@@ -46,25 +51,28 @@ fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: Na
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
-
-        // 옵션별로 RadioButton과 텍스트 표시
-        trainLevelOptions.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                RadioButton(
-                    selected = selectedTrainLevel.value == option,
-                    onClick = { selectedTrainLevel.value = option }
-                )
-                Text(
-                    text = option,
-                    modifier = Modifier.padding(start = 8.dp),
-                    fontFamily = PretenderFontFamily
-                )
-
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp) // 버튼 간격 24.dp
+        ) {
+            // 옵션별로 RadioButton과 텍스트 표시
+            trainLevelOptions.forEach { option ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    CustomRadioButton(
+                        selected = selectedTrainLevel.value == option,
+                        onClick = { selectedTrainLevel.value = option }
+                    )
+                    Text(
+                        text = option,
+                        modifier = Modifier.padding(start = 8.dp),
+                        fontFamily = PretenderFontFamily
+                    )
+                }
             }
         }
+        Check(selected = selectedTrainLevel.value.isNotEmpty(), text = "원하시는 강아지의 훈련난이도를 선택해주세요")
 
         Spacer(modifier = Modifier.weight(1f))
         Box(

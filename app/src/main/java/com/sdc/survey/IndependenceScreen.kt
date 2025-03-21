@@ -1,6 +1,7 @@
 package com.sdc.survey
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
+import com.sdc.findmyperfectdog.ui.theme.BackIcon
+import com.sdc.findmyperfectdog.ui.theme.Check
+import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 // 4. 독립성 화면
 @Composable
@@ -46,7 +50,7 @@ fun IndependenceScreen(selectedIndependence: MutableState<String>, navController
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-
+        BackIcon(navController = navController, step = 4)
         Text(
             text = "4. 강아지의 독립성",
             fontWeight = FontWeight.Bold,
@@ -55,19 +59,27 @@ fun IndependenceScreen(selectedIndependence: MutableState<String>, navController
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        independenceOptions.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                RadioButton(
-                    selected = selectedIndependence.value == option,
-                    onClick = { selectedIndependence.value = option }
-                )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp),
-                    fontFamily = PretenderFontFamily)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp) // 버튼 간격 24.dp
+        ) {
+            independenceOptions.forEach { option ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    CustomRadioButton(
+                        selected = selectedIndependence.value == option,
+                        onClick = { selectedIndependence.value = option }
+                    )
+                    Text(
+                        text = option, modifier = Modifier.padding(start = 8.dp),
+                        fontFamily = PretenderFontFamily
+                    )
+                }
             }
         }
+        Check(selected = selectedIndependence.value.isNotEmpty(), text = "독립성이 높을수록 주인에게 덜 의존적입니다")
+
         Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier
