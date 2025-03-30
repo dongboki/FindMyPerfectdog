@@ -35,7 +35,6 @@ import coil.compose.AsyncImage
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sdc.findmyperfectdog.PretenderFontFamily
 import com.sdc.findmyperfectdog.ui.theme.DotsIndicator
-import com.sdc.findmyperfectdog.ui.theme.ToggleFavoriteIcon
 
 // Firestore에서 불러온 데이터를 담을 데이터 클래스 (기본 생성자 필수)
 data class Breed(
@@ -372,12 +371,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                             }
                         }
                     }
-
-
-//                    🔹 하트 아이콘 (즐겨찾기)
-                    ToggleFavoriteIcon()
-
-                    // 🔹 좋아요 수 표시
+                // 🔹 좋아요 수 표시
 //                    androidx.compose.foundation.layout.Row(
 //                        verticalAlignment = Alignment.CenterVertically,
 //                        modifier = Modifier
