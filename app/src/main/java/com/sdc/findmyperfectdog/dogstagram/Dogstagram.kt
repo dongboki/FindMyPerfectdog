@@ -114,7 +114,7 @@ fun AnonymousPostListScreen(navController: NavController) {
                             "TOP Topics",
                             fontFamily = ComicNeueFamily,
                             fontSize = 28.sp,
-                            modifier = Modifier.padding(start = 24.dp, top = 16.dp)
+                            modifier = Modifier.padding(top = 16.dp)
                         )
                     }
                 )
@@ -130,7 +130,7 @@ fun AnonymousPostListScreen(navController: NavController) {
                         restoreState = true
                     }
                 },
-                onBoneClick = {},
+                onBoneClick = { navController.navigate("surveyNavHost")},
                 onAddClick = {
                     navController.navigate("CreateAnonymousPost_screen")
                 },
@@ -153,13 +153,13 @@ fun AnonymousPostListScreen(navController: NavController) {
                         state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
                         onRefresh = { refreshPosts() }
                     ) {
-                    LazyColumn {
-                        items(posts) { post ->
-                            AnonymousPostItem(
-                                post = post,
-                                onDelete = { postToDelete = it }
-                            )
-                        }
+                        LazyColumn {
+                            items(posts) { post ->
+                                AnonymousPostItem(
+                                    post = post,
+                                    onDelete = { postToDelete = it }
+                                )
+                            }
                         }
                     }
                 }
@@ -204,7 +204,7 @@ fun AnonymousPostItem(
                         .clip(RoundedCornerShape(16.dp)),
                     contentScale = ContentScale.Crop,
 
-                )
+                    )
 
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -216,14 +216,14 @@ fun AnonymousPostItem(
             ) {
                 LikeRow(post = post)
             }
-                // 삭제 버튼
-                Button(
-                    onClick = { onDelete(post) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
-                ){
+            // 삭제 버튼
+            Button(
+                onClick = { onDelete(post) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                )
+            ) {
                 Text(text = "삭제")
             }
         }
