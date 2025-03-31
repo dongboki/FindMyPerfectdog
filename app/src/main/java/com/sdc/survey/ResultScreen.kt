@@ -258,7 +258,7 @@ fun ResultScreen(
                         }
                         // 버튼 위 Spacer 제거
                         Button(
-                            onClick = { navController.navigate("Login_screen") },
+                            onClick = { navController.navigate("home_screen") },
                             shape = RoundedCornerShape(16.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCA651)),
                             modifier = Modifier
