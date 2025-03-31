@@ -1,6 +1,7 @@
 package com.sdc.survey
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
+import com.sdc.findmyperfectdog.ui.theme.BackIcon
+import com.sdc.findmyperfectdog.ui.theme.Check
+import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 @Composable
 fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavController) {
@@ -38,6 +41,7 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
             .padding(16.dp)
             .systemBarsPadding()
     ) {
+        BackIcon(navController = navController, step = 7)
         // 제목 텍스트를 표시합니다.
         Text(
             text = "7. 털빠짐 정도",
@@ -48,19 +52,28 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
         // 제목과 옵션 사이에 간격을 줍니다.
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 각 옵션에 대해 RadioButton과 텍스트를 Row에 배치합니다.
-        sheddingOptions.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                RadioButton(
-                    selected = selectedShedding.value == option,
-                    onClick = { selectedShedding.value = option }
-                )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp),fontFamily = PretenderFontFamily)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp) // 버튼 간격 24.dp
+        ) {
+            // 각 옵션에 대해 RadioButton과 텍스트를 Row에 배치합니다.
+            sheddingOptions.forEach { option ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    CustomRadioButton(
+                        selected = selectedShedding.value == option,
+                        onClick = { selectedShedding.value = option }
+                    )
+                    Text(
+                        text = option,
+                        modifier = Modifier.padding(start = 8.dp),
+                        fontFamily = PretenderFontFamily
+                    )
+                }
             }
         }
+        Check(selected = selectedShedding.value.isNotEmpty(), text = "집에 아이나 반려동물이 있다면 “예”를 체크해주세요.")
 
         // 남은 공간을 차지하는 Spacer (버튼을 하단에 고정)
         Spacer(modifier = Modifier.weight(1f))

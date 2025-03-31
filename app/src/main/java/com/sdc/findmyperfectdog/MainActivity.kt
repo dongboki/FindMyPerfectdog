@@ -13,6 +13,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.sdc.findmyperfectdog.dogstagram.AddPhraseScreen
+import com.sdc.findmyperfectdog.dogstagram.AnonymousPostListScreen
+import com.sdc.findmyperfectdog.dogstagram.CreateAnonymousPostScreen
 import com.sdc.survey.SizeScreen
 import com.sdc.survey.ActivityScreen
 import com.sdc.survey.HomeScreen
@@ -20,9 +23,7 @@ import com.sdc.survey.IndependenceScreen
 import com.sdc.survey.KidScreen
 import com.sdc.survey.ResultScreen
 import com.sdc.survey.SheddingScreen
-import com.sdc.survey.HomeScreen
 import com.sdc.survey.TrainLevelScreen
-
 
 
 class MainActivity : ComponentActivity() {
@@ -31,14 +32,42 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
-                SurveyNavHost(navController = navController)
+//                SurveyNavHost(navController = navController)
+                DogstagramNavHost(navController = navController)
+
             }
         }
     }
 }
+
 val AfacadFontFamily = FontFamily(
     Font(R.font.afacad_medium) // res/font/afacad.ttf에 있는 폰트를 참조
 )
+
+@Composable
+fun DogstagramNavHost(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = "AnonymousPostList_screen") {
+
+        // 게시글 목록 화면
+        composable("AnonymousPostList_screen") {
+            AnonymousPostListScreen(navController = navController)
+        }
+
+        // 게시글 작성 화면
+        composable("CreateAnonymousPost_screen") {
+            CreateAnonymousPostScreen(navController = navController)
+        }
+        // 문구 등록 화면
+        composable("Addphrase_screen") {
+            AddPhraseScreen(navController = navController)
+        }
+        composable("surveyNavHost") {
+            val surveyNavController = rememberNavController()
+            SurveyNavHost(navController = surveyNavController)
+        }
+
+    }
+}
 
 // SurveyNavHost: 설문조사에 사용되는 상태들을 remember로 생성하고 각 화면으로 전달
 @Composable
@@ -52,10 +81,10 @@ fun SurveyNavHost(navController: NavHostController) {
     val selectedShedding = remember { mutableStateOf("") }
     val selectedTrainlevel = remember { mutableStateOf("") }
 
-    NavHost(navController = navController, startDestination = "login_screen") {
-        composable("login_screen") {
-            LoginScreen( navController = navController)
-        }
+    NavHost(navController = navController, startDestination = "home_screen") {
+//        composable("login_screen") {
+//            LoginScreen( navController = navController)
+//        }
         composable("home_screen") {
             HomeScreen(selectedHome = selectedHome, navController = navController)
         }
@@ -90,6 +119,8 @@ fun SurveyNavHost(navController: NavHostController) {
                 selectedTrainlevel = selectedTrainlevel.value
                 ,navController = navController
             )
+
+
         }
     }
 }

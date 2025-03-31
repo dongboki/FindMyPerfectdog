@@ -1,6 +1,7 @@
 package com.sdc.survey
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
+import com.sdc.findmyperfectdog.ui.theme.BackIcon
+import com.sdc.findmyperfectdog.ui.theme.Check
+import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 // 1. 사이즈 선택 화면
 @Composable
@@ -36,6 +39,7 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
             .padding(16.dp)
             .systemBarsPadding()
     ) {
+        BackIcon(navController = navController, step = 2)
         Text(
             text = "2. 사이즈 선택",
             fontWeight = FontWeight.Bold,
@@ -43,18 +47,27 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
-        sizeOptions.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                RadioButton(
-                    selected = selectedSize.value == option,
-                    onClick = { selectedSize.value = option }
-                )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp),fontFamily = PretenderFontFamily)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp) // 버튼 간격 24.dp
+        ) {
+            sizeOptions.forEach { option ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    CustomRadioButton(
+                        selected = selectedSize.value == option,
+                        onClick = { selectedSize.value = option }
+                    )
+                    Text(
+                        text = option,
+                        modifier = Modifier.padding(start = 8.dp),
+                        fontFamily = PretenderFontFamily
+                    )
+                }
             }
         }
+        Check(selected = selectedSize.value.isNotEmpty(), text = "원하시는 강아지의 사이즈를 선택해주세요.")
         Spacer(modifier = Modifier.weight(1f))
 
         Box(

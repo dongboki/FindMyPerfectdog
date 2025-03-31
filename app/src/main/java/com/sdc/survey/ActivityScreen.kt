@@ -1,6 +1,7 @@
 package com.sdc.survey
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sdc.findmyperfectdog.PretenderFontFamily
+import com.sdc.findmyperfectdog.ui.theme.BackIcon
+import com.sdc.findmyperfectdog.ui.theme.Check
+import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 // 3. 활동량 화면
 @Composable
@@ -36,26 +39,35 @@ fun ActivityScreen(selectedActivity: MutableState<String>, navController: NavCon
             .padding(16.dp)
             .systemBarsPadding()
     ) {
+        BackIcon(navController = navController, step = 3)
         Text(
             text = "3. 강아지의 활동량",
             fontWeight = FontWeight.Bold,
             fontFamily = PretenderFontFamily,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            modifier = Modifier.padding(start = 6.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        activityOptions.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                RadioButton(
-                    selected = selectedActivity.value == option,
-                    onClick = { selectedActivity.value = option }
-                )
-                Text(text = option, modifier = Modifier.padding(start = 8.dp),
-                    fontFamily = PretenderFontFamily)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp) // 버튼 간격 24.dp
+        ) {
+            activityOptions.forEach { option ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    CustomRadioButton(
+                        selected = selectedActivity.value == option,
+                        onClick = { selectedActivity.value = option }
+                    )
+                    Text(
+                        text = option, modifier = Modifier.padding(start = 8.dp),
+                        fontFamily = PretenderFontFamily
+                    )
+                }
             }
         }
+        Check(selected = selectedActivity.value.isNotEmpty(), text = "원하시는 강아지의 활동량을 선택해주세요.")
 
         Spacer(modifier = Modifier.weight(1f))
         Box(

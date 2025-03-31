@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,10 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.firestore.FirebaseFirestore
-import com.sdc.findmyperfectdog.AfacadFontFamily
 import com.sdc.findmyperfectdog.PretenderFontFamily
 import com.sdc.findmyperfectdog.ui.theme.DotsIndicator
-import com.sdc.findmyperfectdog.ui.theme.ToggleFavoriteIcon
 
 // Firestore에서 불러온 데이터를 담을 데이터 클래스 (기본 생성자 필수)
 data class Breed(
@@ -262,7 +258,7 @@ fun ResultScreen(
                         }
                         // 버튼 위 Spacer 제거
                         Button(
-                            onClick = { navController.navigate("Login_screen") },
+                            onClick = { navController.navigate("home_screen") },
                             shape = RoundedCornerShape(16.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCA651)),
                             modifier = Modifier
@@ -375,12 +371,7 @@ fun BreedItem(breed: Breed, isFirstRank: Boolean = false) {
                             }
                         }
                     }
-
-
-//                    🔹 하트 아이콘 (즐겨찾기)
-                    ToggleFavoriteIcon()
-
-                    // 🔹 좋아요 수 표시
+                // 🔹 좋아요 수 표시
 //                    androidx.compose.foundation.layout.Row(
 //                        verticalAlignment = Alignment.CenterVertically,
 //                        modifier = Modifier

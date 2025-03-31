@@ -11,10 +11,10 @@ android {
 
     defaultConfig {
         applicationId = "com.sdc.findmyperfectdog"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "2.4"
+        versionCode = 5
+        versionName = "2.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -66,5 +66,9 @@ dependencies {
 
     // Firestore
     implementation ("com.google.firebase:firebase-firestore")
-
+    implementation ("com.google.firebase:firebase-storage")
+    //Auth
+    implementation("com.google.firebase:firebase-auth")
+    //f5 accompainst
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.34.0")
 }

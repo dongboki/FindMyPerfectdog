@@ -31,10 +31,15 @@ import com.sdc.findmyperfectdog.ui.theme.LoginDotsIndicator
 
 
 val PretenderFontFamily = FontFamily(
-    Font(R.font.pretendard_regular,)
+    Font(R.font.pretendard_regular),
+    Font(R.font.pretendard_medium)
+
     // 다른 굵기가 있다면 여기서 추가
 )
-
+val ComicNeueFamily = FontFamily(
+    Font(R.font.comicneue_regular)
+    // 다른 굵기가 있다면 여기서 추가
+)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
