@@ -31,6 +31,8 @@ fun CreateAnonymousPostScreen(navController: NavController) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var isUploading by remember { mutableStateOf(false) }
     var uploadError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
+
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -66,11 +68,23 @@ fun CreateAnonymousPostScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (passwordError.isNotEmpty()) {
+            Text(
+                text = passwordError,
+                color = Color.Red,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Start
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
 
         Box(
             modifier = Modifier
-                .size(200.dp)
+                .fillMaxWidth()
+                .height(400.dp)
                 .clip(RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
@@ -125,37 +139,42 @@ fun CreateAnonymousPostScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    if (nickname.isNotBlank() && password.isNotBlank()) {
-                        isUploading = true
-                        if (selectedImageUri != null) {
-                            // 이미지가 선택되었으면 Firebase Storage에 업로드하여 다운로드 URL 획득
-                            FirebaseRepository.uploadImageToStorage(
-                                imageUri = selectedImageUri!!,
-                                onSuccess = { downloadUrl ->
-                                    isUploading = false
-                                    // savedStateHandle에 다운로드 URL 저장
-                                    navController.currentBackStackEntry?.savedStateHandle?.apply {
-                                        set("nickname", nickname)
-                                        set("password", password)
-                                        set("imageUri", downloadUrl)
-                                    }
-                                    navController.navigate("AddPhrase_screen")
-                                },
-                                onFailure = { exception ->
-                                    isUploading = false
-                                    uploadError = "이미지 업로드 실패: ${exception.localizedMessage}"
+                    passwordError = ""
+                    if (nickname.isBlank() || password.isBlank()) {
+                        uploadError = "닉네임과 비밀번호를 입력해주세요."
+                        return@Button
+                    }
+                    if (password.length < 5) {
+                        passwordError = "비밀번호는 5글자 이상이어야 합니다."
+                        return@Button
+                    }
+
+                    isUploading = true
+                    if (selectedImageUri != null) {
+                        FirebaseRepository.uploadImageToStorage(
+                            imageUri = selectedImageUri!!,
+                            onSuccess = { downloadUrl ->
+                                isUploading = false
+                                navController.currentBackStackEntry?.savedStateHandle?.apply {
+                                    set("nickname", nickname)
+                                    set("password", password)
+                                    set("imageUri", downloadUrl)
                                 }
-                            )
-                        } else {
-                            // 이미지가 없으면 null 전달
-                            isUploading = false
-                            navController.currentBackStackEntry?.savedStateHandle?.apply {
-                                set("nickname", nickname)
-                                set("password", password)
-                                set("imageUri", null)
+                                navController.navigate("AddPhrase_screen")
+                            },
+                            onFailure = { exception ->
+                                isUploading = false
+                                uploadError = "이미지 업로드 실패: ${exception.localizedMessage}"
                             }
-                            navController.navigate("AddPhrase_screen")
+                        )
+                    } else {
+                        isUploading = false
+                        navController.currentBackStackEntry?.savedStateHandle?.apply {
+                            set("nickname", nickname)
+                            set("password", password)
+                            set("imageUri", null)
                         }
+                        navController.navigate("AddPhrase_screen")
                     }
                 }
             ) {
