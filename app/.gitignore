@@ -1,1 +1,6 @@
 /build
+/app/google-services.json
+/app-release.aab
+/.firebaserc
+/firebase.json
+/finedog.jks

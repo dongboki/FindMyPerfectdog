@@ -31,7 +31,11 @@ import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 // 4. 독립성 화면
 @Composable
-fun IndependenceScreen(selectedIndependence: MutableState<String>, navController: NavController) {
+fun IndependenceScreen(
+    selectedIndependence: MutableState<String>,
+    navController: NavController,
+    rootNavController: NavController
+) {
     val independenceOptions = listOf("상", "중", "하")
     Column(
         modifier = Modifier
@@ -39,7 +43,7 @@ fun IndependenceScreen(selectedIndependence: MutableState<String>, navController
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-        BackIcon(navController = navController, step = 4)
+        BackIcon(navController = navController, rootNavController = rootNavController, step = 4)
         Text(
             text = "4. 강아지의 독립성",
             fontWeight = FontWeight.Bold,

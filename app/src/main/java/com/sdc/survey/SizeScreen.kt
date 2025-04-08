@@ -31,15 +31,19 @@ import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 // 1. 사이즈 선택 화면
 @Composable
-fun SizeScreen(selectedSize: MutableState<String>, navController: NavController) {
-    val sizeOptions = listOf("소형", "중형", "대형","초대형")
+fun SizeScreen(
+    selectedSize: MutableState<String>,
+    navController: NavController,
+    rootNavController: NavController
+) {
+    val sizeOptions = listOf("소형", "중형", "대형", "초대형")
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-        BackIcon(navController = navController, step = 2)
+        BackIcon(navController = navController, rootNavController = rootNavController, step = 2)
         Text(
             text = "2. 사이즈 선택",
             fontWeight = FontWeight.Bold,
@@ -90,7 +94,8 @@ fun SizeScreen(selectedSize: MutableState<String>, navController: NavController)
             ) {
                 Text(
                     text = "다음",
-                    fontWeight = FontWeight.SemiBold,fontFamily = PretenderFontFamily // 글씨 굵기 SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = PretenderFontFamily // 글씨 굵기 SemiBold
                 )
             }
         }

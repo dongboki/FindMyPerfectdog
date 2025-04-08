@@ -31,7 +31,11 @@ import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 // 5. 아이 유무 화면
 @Composable
-fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
+fun KidScreen(
+    hasKid: MutableState<String>,
+    navController: NavController,
+    rootNavController: NavController
+) {
     val yesNoOptions = listOf("예", "아니오")
     Column(
         modifier = Modifier
@@ -39,13 +43,13 @@ fun KidScreen(hasKid: MutableState<String>, navController: NavController) {
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-        BackIcon(navController = navController, step = 5)
+        BackIcon(navController = navController, rootNavController = rootNavController, step = 5)
         Text(
             text = "5. 아이 유무",
             fontWeight = FontWeight.Bold,
             fontFamily = PretenderFontFamily,
             fontSize = 16.sp
-            )
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Column(
             verticalArrangement = Arrangement.spacedBy(24.dp) // 버튼 간격 24.dp

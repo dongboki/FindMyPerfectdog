@@ -31,7 +31,7 @@ import com.sdc.findmyperfectdog.ui.theme.Check
 import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 @Composable
-fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: NavController) {
+fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: NavController, rootNavController: NavController) {
     // 옵션 리스트: 어려움, 보통, 쉬움
     val trainLevelOptions = listOf("어려움", "보통", "쉬움")
 
@@ -41,7 +41,7 @@ fun TrainLevelScreen(selectedTrainLevel: MutableState<String>, navController: Na
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-        BackIcon(navController = navController, step = 6)
+        BackIcon(navController = navController,rootNavController = rootNavController, step = 6)
         // 제목 표시
         Text(
             text = "6. 훈련 난이도",

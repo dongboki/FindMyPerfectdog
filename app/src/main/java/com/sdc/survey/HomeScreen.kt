@@ -33,7 +33,11 @@ import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 // 사용자에게는 "원룸/오피스텔" 같은 긴 설명을 보여주지만,
 // 실제로는 "소형", "중형", "대형", "농가" 중 하나를 selectedYard에 저장함.
 @Composable
-fun HomeScreen(selectedHome: MutableState<String>, navController: NavController) {
+fun HomeScreen(
+    selectedHome: MutableState<String>,
+    navController: NavController,
+    rootNavController: NavController
+) {
 
     // (1) 긴 설명 -> 짧은 분류 매핑
     val HomeMapping = mapOf(
@@ -52,7 +56,7 @@ fun HomeScreen(selectedHome: MutableState<String>, navController: NavController)
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-        BackIcon(navController = navController, step = 1)
+        BackIcon(navController = navController, rootNavController = rootNavController, step = 1)
         Text(
             text = "1.  주거환경",
             fontWeight = FontWeight.Bold,
