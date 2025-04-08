@@ -30,7 +30,11 @@ import com.sdc.findmyperfectdog.ui.theme.Check
 import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 @Composable
-fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavController) {
+fun SheddingScreen(
+    selectedShedding: MutableState<String>,
+    navController: NavController,
+    rootNavController: NavController
+) {
     // 많음, 보통, 적음 옵션 리스트를 만듭니다.
     val sheddingOptions = listOf("많음", "보통", "적음")
 
@@ -41,7 +45,7 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-        BackIcon(navController = navController, step = 7)
+        BackIcon(navController = navController, rootNavController = rootNavController, step = 7)
         // 제목 텍스트를 표시합니다.
         Text(
             text = "7. 털빠짐 정도",
@@ -73,7 +77,10 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
                 }
             }
         }
-        Check(selected = selectedShedding.value.isNotEmpty(), text = "집에 아이나 반려동물이 있다면 “예”를 체크해주세요.")
+        Check(
+            selected = selectedShedding.value.isNotEmpty(),
+            text = "집에 아이나 반려동물이 있다면 “예”를 체크해주세요."
+        )
 
         // 남은 공간을 차지하는 Spacer (버튼을 하단에 고정)
         Spacer(modifier = Modifier.weight(1f))
@@ -97,7 +104,8 @@ fun SheddingScreen(selectedShedding: MutableState<String>, navController: NavCon
             ) {
                 Text(
                     text = "다음",
-                    fontWeight = FontWeight.SemiBold,fontFamily = PretenderFontFamily // 글씨 굵기 SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = PretenderFontFamily // 글씨 굵기 SemiBold
                 )
             }
         }

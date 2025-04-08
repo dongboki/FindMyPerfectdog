@@ -31,7 +31,11 @@ import com.sdc.findmyperfectdog.ui.theme.CustomRadioButton
 
 // 3. 활동량 화면
 @Composable
-fun ActivityScreen(selectedActivity: MutableState<String>, navController: NavController) {
+fun ActivityScreen(
+    selectedActivity: MutableState<String>,
+    navController: NavController,
+    rootNavController: NavController
+) {
     val activityOptions = listOf("상", "중", "하")
     Column(
         modifier = Modifier
@@ -39,7 +43,7 @@ fun ActivityScreen(selectedActivity: MutableState<String>, navController: NavCon
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-        BackIcon(navController = navController, step = 3)
+        BackIcon(navController = navController, rootNavController = rootNavController, step = 3)
         Text(
             text = "3. 강아지의 활동량",
             fontWeight = FontWeight.Bold,

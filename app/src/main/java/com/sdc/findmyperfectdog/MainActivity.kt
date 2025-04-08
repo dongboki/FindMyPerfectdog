@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,7 +33,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
-//                SurveyNavHost(navController = navController)
                 DogstagramNavHost(navController = navController)
 
             }
@@ -63,15 +63,17 @@ fun DogstagramNavHost(navController: NavHostController) {
         }
         composable("surveyNavHost") {
             val surveyNavController = rememberNavController()
-            SurveyNavHost(navController = surveyNavController)
+            SurveyNavHost(
+                navController = surveyNavController,
+                rootNavController = navController // ✅ 추가됨
+            )
         }
-
     }
 }
 
 // SurveyNavHost: 설문조사에 사용되는 상태들을 remember로 생성하고 각 화면으로 전달
 @Composable
-fun SurveyNavHost(navController: NavHostController) {
+fun SurveyNavHost(navController: NavHostController, rootNavController: NavController) {
     // 각 설문 항목에 대한 상태 변수
     val selectedSize = remember { mutableStateOf("") }
     val selectedHome = remember { mutableStateOf("") }
@@ -86,25 +88,53 @@ fun SurveyNavHost(navController: NavHostController) {
 //            LoginScreen( navController = navController)
 //        }
         composable("home_screen") {
-            HomeScreen(selectedHome = selectedHome, navController = navController)
+            HomeScreen(
+                selectedHome = selectedHome,
+                navController = navController,
+                rootNavController = rootNavController
+            )
         }
         composable("size_screen") {
-            SizeScreen(selectedSize = selectedSize, navController = navController)
+            SizeScreen(
+                selectedSize = selectedSize,
+                navController = navController,
+                rootNavController = rootNavController
+            )
         }
         composable("activity_screen") {
-            ActivityScreen(selectedActivity = selectedActivity, navController = navController)
+            ActivityScreen(
+                selectedActivity = selectedActivity,
+                navController = navController,
+                rootNavController = rootNavController
+            )
         }
         composable("independence_screen") {
-            IndependenceScreen(selectedIndependence = selectedIndependence, navController = navController)
+            IndependenceScreen(
+                selectedIndependence = selectedIndependence,
+                navController = navController,
+                rootNavController = rootNavController
+            )
         }
         composable("kid_screen") {
-            KidScreen(hasKid = hasKid, navController = navController)
+            KidScreen(
+                hasKid = hasKid,
+                navController = navController,
+                rootNavController = rootNavController
+            )
         }
         composable("trainLevel_screen") {
-            TrainLevelScreen(selectedTrainLevel = selectedTrainlevel, navController = navController)
+            TrainLevelScreen(
+                selectedTrainLevel = selectedTrainlevel,
+                navController = navController,
+                rootNavController = rootNavController
+            )
         }
         composable("shedding_screen") {
-            SheddingScreen(selectedShedding = selectedShedding, navController = navController)
+            SheddingScreen(
+                selectedShedding = selectedShedding,
+                navController = navController,
+                rootNavController = rootNavController
+            )
         }
 
 
@@ -116,8 +146,7 @@ fun SurveyNavHost(navController: NavHostController) {
                 selectedIndependence = selectedIndependence.value,
                 hasKid = hasKid.value,
                 selectedShedding = selectedShedding.value,
-                selectedTrainlevel = selectedTrainlevel.value
-                ,navController = navController
+                selectedTrainlevel = selectedTrainlevel.value, navController = navController
             )
 
 
