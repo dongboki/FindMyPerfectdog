@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id ("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.kapt")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -66,5 +68,13 @@ dependencies {
 
     // Firestore
     implementation ("com.google.firebase:firebase-firestore")
+
+    //Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    //Gson
+    implementation("com.google.code.gson:gson:2.10.1")
 
 }
